@@ -1,17 +1,40 @@
 package org.araa;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.SyndFeedOutput;
+import com.rometools.rome.io.XmlReader;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.net.URL;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        try {
+            URL feedSource = new URL("https://feeds.bbci.co.uk/news/world/rss.xml");
+            SyndFeedInput input = new SyndFeedInput();
+            SyndFeed feed = input.build(new XmlReader(feedSource));
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+            for (SyndEntry entry : feed.getEntries()) {
+                System.out.println(entry.getTitle());
+                System.out.println(entry.getLink());
+                System.out.println(entry.getComments());
+                System.out.println(entry.getUri());
+                System.out.println(entry.getForeignMarkup());
+                System.out.println(entry.findRelatedLink("xmlns:media"));
+                System.out.println("====================");
+            }
+
+            System.out.println(feed.getTitle());
+
+//            File file = new File("feed.xml");
+//            output.output(feed, new FileWriter(file));
+
+//            System.out.println("Feed written to file successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
