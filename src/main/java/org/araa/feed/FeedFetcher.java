@@ -1,4 +1,4 @@
-package org.araa.utility;
+package org.araa.feed;
 
 import org.jdom2.Document;
 import org.jdom2.JDOMException;

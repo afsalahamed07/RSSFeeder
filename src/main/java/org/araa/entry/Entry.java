@@ -1,4 +1,4 @@
-package org.araa.entity;
+package org.araa.entry;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import lombok.AllArgsConstructor;

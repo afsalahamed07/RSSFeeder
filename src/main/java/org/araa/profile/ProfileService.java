@@ -1,20 +1,27 @@
-package org.araa.service;
+package org.araa.profile;
 
-import org.araa.entity.Profile;
-import org.araa.repository.ProfileRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.araa.profile.Profile;
+import org.araa.profile.ProfileRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class ProfileService {
 
-    private ProfileRepository profileRepository;
+    private final ProfileRepository profileRepository;
 
     // Save a new profile
     public Profile saveProfile(Profile profile) {
+        return profileRepository.save(profile);
+    }
+
+    public Profile saveProfile(String username) {
+        Profile profile = new Profile();
+        profile.setUsername(username);
         return profileRepository.save(profile);
     }
 
@@ -37,5 +44,11 @@ public class ProfileService {
 
         // Save the updated profile
         profileRepository.save(profile);
+    }
+
+    public List<String> getRssFeedsForProfile(String username) {
+        // Fetch the profile by username
+        Profile profile = profileRepository.findById(username).orElseThrow(() -> new RuntimeException("Profile not found"));
+        return profile.getSubscriptions();
     }
 }
