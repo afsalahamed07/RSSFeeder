@@ -25,11 +25,7 @@ public class Feed {
     private SyndFeed feed;
 
 
-    public Feed(String rss) throws IOException, JDOMException, FeedException {
-        FeedFetcher feedFetcher = FeedFetcher.INSTANCE;
-        // Assuming decodeURL method exists and properly decodes the URL
-        String decodedUrl = java.net.URLDecoder.decode(rss, StandardCharsets.UTF_8);
-        Document document = feedFetcher.parseFeed(decodedUrl);
+    public Feed(Document document) throws IOException, JDOMException, FeedException {
         SyndFeedInput input = new SyndFeedInput();
         this.feed = input.build(document);
     }
