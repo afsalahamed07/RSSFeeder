@@ -1,5 +1,7 @@
 package org.araa.feed;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -16,6 +18,7 @@ public enum FeedFetcher {
     INSTANCE;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final Logger logger = LogManager.getLogger(FeedFetcher.class);
 
     private CompletableFuture<InputStream> openFeedStreamAsync(String feedUrl) {
         /*
@@ -26,6 +29,7 @@ public enum FeedFetcher {
             try {
                 return openFeedStream(feedUrl);
             } catch (IOException e) {
+                logger.error("Error opening feed stream", e);
                 throw new RuntimeException("Error opening feed stream", e);
             }
         }, executorService);
@@ -38,18 +42,23 @@ public enum FeedFetcher {
          * It returns a CompletableFuture<Document> that will be completed with the parsed Document.
          */
         return openFeedStreamAsync(feedUrl).thenApplyAsync(feedStream -> {
-                    try (InputStream stream = feedStream) { // Ensures that the InputStream is closed automatically
-                        return new SAXBuilder().build(stream);
-                    } catch (IOException | JDOMException e) {
-                        throw new RuntimeException("Error parsing feed", e);
-                    }
-                }, executorService)
+            logger.info("Parsing feed from {}", feedUrl);
+            try (InputStream stream = feedStream) { // Ensures that the InputStream is closed automatically
+                return new SAXBuilder().build(stream);
+            } catch (IOException | JDOMException e) {
+                logger.error("Error parsing feed", e);
+                throw new RuntimeException("Error parsing feed", e);
+            }
+        }, executorService)
                 .exceptionally(e -> {
+                    logger.error("Error parsing feed", e);
                     throw new RuntimeException("Error parsing feed", e);
                 });
+
     }
 
     private InputStream openFeedStream(String feedUrl) throws IOException {
+        logger.info("Opening feed stream for {}", feedUrl);
         URL url = new URL(feedUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -60,6 +69,10 @@ public enum FeedFetcher {
     }
 
     public Document parseFeed(String feedUrl) throws IOException, JDOMException {
+        /*
+         * This method fetches and parses the feed content from the given URL.
+         * It returns the parsed Document.
+         */
         try (InputStream feedStream = openFeedStream(feedUrl)) {
             return new SAXBuilder().build(feedStream);
         } // Ensures that the InputStream is closed automatically
