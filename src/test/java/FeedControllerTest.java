@@ -1,6 +1,6 @@
 import org.araa.feed.Feed;
 import org.araa.feed.FeedController;
-import org.araa.feed.FeedFetcher;
+import org.araa.utility.FetchDocument;
 import org.araa.feed.FeedService;
 import org.jdom2.Document;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,11 +25,11 @@ public class FeedControllerTest {
     @InjectMocks
     private FeedController feedController;
 
-    private final FeedFetcher feedFetcher = FeedFetcher.INSTANCE;
+    private final FetchDocument fetchDocument = FetchDocument.INSTANCE;
 
     @Test
     public void testFetchFeed() throws Exception{
-        Document document = feedFetcher.parseFeedAsync("https://www.newswire.lk/feed").join();
+        Document document = fetchDocument.parseFeedAsync("https://www.newswire.lk/feed").join();
         Feed mockFeed = new Feed(document);
         when(feedService.fetchFeed("https://www.newswire.lk/feed")).thenReturn(CompletableFuture.completedFuture(mockFeed));
 
