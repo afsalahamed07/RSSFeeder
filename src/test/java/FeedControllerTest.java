@@ -1,8 +1,8 @@
-import org.araa.domain.Feed;
+import com.rometools.rome.feed.synd.SyndFeed;
 import org.araa.controllers.FeedController;
-import org.araa.infrastructure.utility.FetchDocument;
+import org.araa.domain.Feed;
+import org.araa.infrastructure.utility.XMLParser;
 import org.araa.services.FeedService;
-import org.jdom2.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,15 +22,16 @@ public class FeedControllerTest {
     @Mock
     private FeedService feedService;
 
+    @Mock
+    private XMLParser XMLParser;
+
     @InjectMocks
     private FeedController feedController;
 
-    private final FetchDocument fetchDocument = FetchDocument.INSTANCE;
-
     @Test
     public void testFetchFeed() throws Exception{
-        Document document = fetchDocument.fetchAndParseFeed("https://www.newswire.lk/feed");
-        Feed mockFeed = new Feed(document);
+        SyndFeed syndFeed = XMLParser.parse("https://www.newswire.lk/feed");
+        Feed mockFeed = new Feed(syndFeed);
         when(feedService.fetchFeed("https://www.newswire.lk/feed")).thenReturn(CompletableFuture.completedFuture(mockFeed));
 
         CompletableFuture<ResponseEntity<Feed>> response = feedController.fetchFeed("https://www.newswire.lk/feed");

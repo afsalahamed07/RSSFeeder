@@ -1,8 +1,10 @@
 package org.araa.repositories;
 
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.XmlReader;
 import lombok.AllArgsConstructor;
 import org.araa.domain.Feed;
-import org.araa.infrastructure.utility.FetchDocument;
+import org.araa.infrastructure.utility.XMLParser;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.cache.RedisCache;
@@ -16,7 +18,6 @@ import java.util.Objects;
 public class FeedRepositoryImp implements FeedRepository {
     @Qualifier("RedisCacheManager")
     private RedisCacheManager cacheManager;
-    private final FetchDocument fetchDocument = FetchDocument.INSTANCE;
 
     @Cacheable(value = "feed", key = "#rss", unless = "#result == null")
     public Feed getFeed(String rss) {
@@ -32,10 +33,11 @@ public class FeedRepositoryImp implements FeedRepository {
         } else {
             // Feed not found in cache, fetch and parse it
             try {
-                feed = new Feed(fetchDocument.fetchAndParseFeed(rss));
+                SyndFeed syndFeed = XMLParser.parse(rss);
+                feed = new Feed(syndFeed);
                 return feed;
             } catch (Exception e) {
-                throw new RuntimeException("Failed to fetch and create feed from document", e);
+                throw new RuntimeException("Failed to parse and create feed", e);
             }
         }
     }
