@@ -1,6 +1,8 @@
-package org.araa.profile;
+package org.araa.controllers;
 
 import lombok.AllArgsConstructor;
+import org.araa.domain.Profile;
+import org.araa.services.ProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

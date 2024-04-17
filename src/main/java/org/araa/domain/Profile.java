@@ -1,4 +1,4 @@
-package org.araa.profile;
+package org.araa.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;

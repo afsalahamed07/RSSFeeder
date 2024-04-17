@@ -1,4 +1,4 @@
-package org.araa.feed.entry;
+package org.araa.domain;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import lombok.AllArgsConstructor;

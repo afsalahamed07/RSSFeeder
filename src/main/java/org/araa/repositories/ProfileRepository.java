@@ -1,6 +1,6 @@
-package org.araa.profile;
+package org.araa.repositories;
 
-import org.araa.profile.Profile;
+import org.araa.domain.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

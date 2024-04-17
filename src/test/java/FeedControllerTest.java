@@ -1,7 +1,7 @@
-import org.araa.feed.Feed;
-import org.araa.feed.FeedController;
-import org.araa.utility.FetchDocument;
-import org.araa.feed.FeedService;
+import org.araa.domain.Feed;
+import org.araa.controllers.FeedController;
+import org.araa.infrastructure.utility.FetchDocument;
+import org.araa.services.FeedService;
 import org.jdom2.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

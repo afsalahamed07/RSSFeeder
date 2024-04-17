@@ -1,8 +1,8 @@
-package org.araa.profile;
+package org.araa.services;
 
 import lombok.AllArgsConstructor;
-import org.araa.profile.Profile;
-import org.araa.profile.ProfileRepository;
+import org.araa.domain.Profile;
+import org.araa.repositories.ProfileRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

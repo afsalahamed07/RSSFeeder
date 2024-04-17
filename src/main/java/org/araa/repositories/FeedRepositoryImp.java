@@ -1,10 +1,8 @@
-package org.araa.feed;
+package org.araa.repositories;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import org.araa.utility.FetchDocument;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.araa.domain.Feed;
+import org.araa.infrastructure.utility.FetchDocument;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.cache.RedisCache;
@@ -22,6 +20,7 @@ public class FeedRepositoryImp implements FeedRepository {
 
     @Cacheable(value = "feed", key = "#rss", unless = "#result == null")
     public Feed getFeed(String rss) {
+        // this is required to set the correct class loader for the current thread
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         RedisCache cache = (RedisCache) Objects.requireNonNull(cacheManager.getCache("feed"));

@@ -1,5 +1,6 @@
-package org.araa.utility;
+package org.araa.infrastructure.utility;
 
+import com.rometools.rome.io.XmlReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
@@ -8,6 +9,7 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;

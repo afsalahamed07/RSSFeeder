@@ -1,4 +1,4 @@
-package org.araa.config;
+package org.araa.infrastructure.config;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
