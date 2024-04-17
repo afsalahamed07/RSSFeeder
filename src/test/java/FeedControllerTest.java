@@ -29,7 +29,7 @@ public class FeedControllerTest {
 
     @Test
     public void testFetchFeed() throws Exception{
-        Document document = fetchDocument.parseFeedAsync("https://www.newswire.lk/feed").join();
+        Document document = fetchDocument.fetchAndParseFeed("https://www.newswire.lk/feed");
         Feed mockFeed = new Feed(document);
         when(feedService.fetchFeed("https://www.newswire.lk/feed")).thenReturn(CompletableFuture.completedFuture(mockFeed));
 

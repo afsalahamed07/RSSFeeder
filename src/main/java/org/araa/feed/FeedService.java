@@ -26,7 +26,7 @@ public class FeedService {
                 })
                 .exceptionally(e -> {
                     logger.error("Error fetching feed for {}", rss, e);
-                    return null;
+                    throw new RuntimeException("Error fetching feed for " + rss, e);
                 });
     }
 
