@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,15 +34,12 @@ public class Feed {
     private List<Entry> entries;
 
 
-    public Feed(Document document) throws FeedException {
-        logger.info("Building feed from document");
-        SyndFeedInput input = new SyndFeedInput();
-        SyndFeed feed = input.build(document);
-        this.title = feed.getTitle();
-        this.description = feed.getDescription();
-        this.feedType = feed.getFeedType();
-        this.link = feed.getLink();
-        this.entries = feed.getEntries().stream().map(Entry::buildEntry).toList();
+    public Feed(SyndFeed syndFeed) {
+        this.title = syndFeed.getTitle();
+        this.description = syndFeed.getDescription();
+        this.feedType = syndFeed.getFeedType();
+        this.link = syndFeed.getLink();
+        this.entries = syndFeed.getEntries().stream().map(Entry::buildEntry).toList();
     }
 
     // Serialize this Feed object to a JSON string
