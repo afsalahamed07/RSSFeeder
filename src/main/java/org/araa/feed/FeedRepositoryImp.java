@@ -22,6 +22,8 @@ public class FeedRepositoryImp implements FeedRepository {
 
     @Cacheable(value = "feed", key = "#rss", unless = "#result == null")
     public Feed getFeed(String rss) {
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
         RedisCache cache = (RedisCache) Objects.requireNonNull(cacheManager.getCache("feed"));
         Feed feed = cache.get(rss, Feed.class);  // This will automatically deserialize the JSON back into a Feed object
 
@@ -32,8 +34,6 @@ public class FeedRepositoryImp implements FeedRepository {
             // Feed not found in cache, fetch and parse it
             try {
                 feed = new Feed(fetchDocument.fetchAndParseFeed(rss));
-                // Put the newly fetched feed into the cache
-                cache.put(rss, feed);
                 return feed;
             } catch (Exception e) {
                 throw new RuntimeException("Failed to fetch and create feed from document", e);
