@@ -1,6 +1,7 @@
 package org.araa.domain;
 
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndImage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,8 @@ public class Feed {
     private String description;
     private String feedType;
     private String link;
+    private SyndImage icon;
+    private SyndImage image;
     private List<Entry> entries;
 
 
@@ -33,5 +36,7 @@ public class Feed {
         this.feedType = syndFeed.getFeedType();
         this.link = syndFeed.getLink();
         this.entries = syndFeed.getEntries().stream().map(Entry::buildEntry).toList();
+        this.icon = syndFeed.getIcon();
+        this.image = syndFeed.getImage();
     }
 }
