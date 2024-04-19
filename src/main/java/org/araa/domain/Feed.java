@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.tools.picocli.CommandLine;
+import org.araa.application.builder.EntryBuilder;
 
 import java.util.List;
 
@@ -25,18 +27,5 @@ public class Feed {
     private String description;
     private String feedType;
     private String link;
-    private SyndImage icon;
-    private SyndImage image;
     private List<Entry> entries;
-
-
-    public Feed(SyndFeed syndFeed) {
-        this.title = syndFeed.getTitle();
-        this.description = syndFeed.getDescription();
-        this.feedType = syndFeed.getFeedType();
-        this.link = syndFeed.getLink();
-        this.entries = syndFeed.getEntries().stream().map(Entry::buildEntry).toList();
-        this.icon = syndFeed.getIcon();
-        this.image = syndFeed.getImage();
-    }
 }

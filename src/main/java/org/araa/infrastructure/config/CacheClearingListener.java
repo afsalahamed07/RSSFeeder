@@ -1,4 +1,4 @@
-package org.araa.infrastructure;
+package org.araa.infrastructure.config;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;

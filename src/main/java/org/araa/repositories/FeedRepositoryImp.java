@@ -1,8 +1,10 @@
 package org.araa.repositories;
 
 import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.XmlReader;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.araa.application.builder.FeedFactory;
 import org.araa.domain.Feed;
 import org.araa.infrastructure.utility.XMLParser;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,8 +18,11 @@ import java.util.Objects;
 @Repository
 @AllArgsConstructor
 public class FeedRepositoryImp implements FeedRepository {
+    private static final Logger logger = LogManager.getLogger(FeedRepositoryImp.class);
     @Qualifier("RedisCacheManager")
     private RedisCacheManager cacheManager;
+
+    private FeedFactory feedFactory;
 
     @Cacheable(value = "feed", key = "#rss", unless = "#result == null")
     public Feed getFeed(String rss) {
@@ -25,6 +30,7 @@ public class FeedRepositoryImp implements FeedRepository {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         RedisCache cache = (RedisCache) Objects.requireNonNull(cacheManager.getCache("feed"));
+        logger.info("Class loader for Feed: {}", Feed.class.getClassLoader());
         Feed feed = cache.get(rss, Feed.class);  // This will automatically deserialize the JSON back into a Feed object
 
         if (feed != null) {
@@ -34,7 +40,7 @@ public class FeedRepositoryImp implements FeedRepository {
             // Feed not found in cache, fetch and parse it
             try {
                 SyndFeed syndFeed = XMLParser.parse(rss);
-                feed = new Feed(syndFeed);
+                feed = feedFactory.createFeed(syndFeed);
                 return feed;
             } catch (Exception e) {
                 throw new RuntimeException("Failed to parse and create feed", e);
