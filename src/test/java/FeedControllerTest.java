@@ -1,4 +1,6 @@
 import com.rometools.rome.feed.synd.SyndFeed;
+import org.araa.application.builder.EntryBuilder;
+import org.araa.application.builder.FeedFactory;
 import org.araa.controllers.FeedController;
 import org.araa.domain.Feed;
 import org.araa.infrastructure.utility.XMLParser;
@@ -25,13 +27,16 @@ public class FeedControllerTest {
     @Mock
     private XMLParser XMLParser;
 
+    @Mock
+    private FeedFactory feedFactory;
+
     @InjectMocks
     private FeedController feedController;
 
     @Test
     public void testFetchFeed() throws Exception{
         SyndFeed syndFeed = XMLParser.parse("https://www.newswire.lk/feed");
-        Feed mockFeed = new Feed(syndFeed);
+        Feed mockFeed = feedFactory.createFeed(syndFeed);
         when(feedService.fetchFeed("https://www.newswire.lk/feed")).thenReturn(CompletableFuture.completedFuture(mockFeed));
 
         CompletableFuture<ResponseEntity<Feed>> response = feedController.fetchFeed("https://www.newswire.lk/feed");
