@@ -12,8 +12,8 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @PostMapping("/profile")
-    public ResponseEntity<Profile> createProfile(@RequestBody String username, @RequestBody String password, @RequestBody String name, @RequestBody String email) {
+    @PostMapping("/register_profile")
+    public ResponseEntity<Profile> registerProfile(@RequestBody String username, @RequestBody String password, @RequestBody String name, @RequestBody String email) {
         // this is I/O bound operation
         Profile profile = profileService.saveProfile(username, password, name, email);
         return ResponseEntity.ok(profile);
