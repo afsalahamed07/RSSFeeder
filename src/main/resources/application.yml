@@ -16,9 +16,15 @@ spring:
       host: localhost
       port: 6379
 
-  devtools:
-    livereload:
-      enabled: false
+#  devtools:
+#    livereload:
+#      enabled: false
+#
+#    restart:
+#      enabled: false
 
-    restart:
-      enabled: false
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

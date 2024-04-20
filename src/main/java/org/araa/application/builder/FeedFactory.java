@@ -2,7 +2,7 @@ package org.araa.application.builder;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import lombok.AllArgsConstructor;
-import org.araa.domain.Feed;
+import org.araa.application.dto.Feed;
 import org.springframework.stereotype.Component;
 
 @Component

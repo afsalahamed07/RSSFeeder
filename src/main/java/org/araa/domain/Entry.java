@@ -21,7 +21,6 @@ public class Entry {
 
     private final static Logger logger = LogManager.getLogger(Entry.class);
     private String title;
-//    private SyndContent syndDescription;
     private String link;
     private Date publishedDate;
     private String author;

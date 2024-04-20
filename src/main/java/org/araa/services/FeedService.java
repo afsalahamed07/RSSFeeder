@@ -3,7 +3,7 @@ package org.araa.services;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.araa.domain.Feed;
+import org.araa.application.dto.Feed;
 import org.araa.repositories.FeedRepository;
 import org.springframework.stereotype.Service;
 

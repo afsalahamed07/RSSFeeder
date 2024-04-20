@@ -19,6 +19,15 @@ public class ProfileService {
         return profileRepository.save(profile);
     }
 
+    public Profile saveProfile(String username, String password, String name, String email) {
+        Profile profile = new Profile();
+        profile.setUsername(username);
+        profile.setPassword(password);
+        profile.setName(name);
+        profile.setEmail(email);
+        return profileRepository.save(profile);
+    }
+
     public Profile saveProfile(String username) {
         Profile profile = new Profile();
         profile.setUsername(username);
@@ -30,25 +39,25 @@ public class ProfileService {
         return profileRepository.findAll();
     }
 
-    public void addRssFeedToProfile(String username, String rssFeed) {
-        // Fetch the profile by username
-        Profile profile = profileRepository.findById(username).orElseThrow(() -> new RuntimeException("Profile not found"));
-
-        // Add the RSS feed to subscriptions list
-        List<String> subscriptions = profile.getSubscriptions();
-        if (subscriptions == null) {
-            subscriptions = new ArrayList<>();
-            profile.setSubscriptions(subscriptions);
-        }
-        subscriptions.add(rssFeed);
-
-        // Save the updated profile
-        profileRepository.save(profile);
-    }
-
-    public List<String> getRssFeedsForProfile(String username) {
-        // Fetch the profile by username
-        Profile profile = profileRepository.findById(username).orElseThrow(() -> new RuntimeException("Profile not found"));
-        return profile.getSubscriptions();
-    }
+//    public void addRssFeedToProfile(String username, String rssFeed) {
+//        // Fetch the profile by username
+//        Profile profile = profileRepository.findById(username).orElseThrow(() -> new RuntimeException("Profile not found"));
+//
+//        // Add the RSS feed to subscriptions list
+//        List<String> subscriptions = profile.getSubscriptions();
+//        if (subscriptions == null) {
+//            subscriptions = new ArrayList<>();
+//            profile.setSubscriptions(subscriptions);
+//        }
+//        subscriptions.add(rssFeed);
+//
+//        // Save the updated profile
+//        profileRepository.save(profile);
+//    }
+//
+//    public List<String> getRssFeedsForProfile(String username) {
+//        // Fetch the profile by username
+//        Profile profile = profileRepository.findById(username).orElseThrow(() -> new RuntimeException("Profile not found"));
+//        return profile.getSubscriptions();
+//    }
 }

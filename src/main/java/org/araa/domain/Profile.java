@@ -3,7 +3,7 @@ package org.araa.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -13,6 +13,15 @@ public class Profile {
     @Id
     private String username;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> subscriptions;
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Subscription> subscriptions;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
 }

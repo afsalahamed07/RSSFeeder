@@ -1,8 +1,7 @@
 import com.rometools.rome.feed.synd.SyndFeed;
-import org.araa.application.builder.EntryBuilder;
 import org.araa.application.builder.FeedFactory;
 import org.araa.controllers.FeedController;
-import org.araa.domain.Feed;
+import org.araa.application.dto.Feed;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.services.FeedService;
 import org.junit.jupiter.api.Test;

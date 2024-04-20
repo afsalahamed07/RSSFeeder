@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.builder.FeedFactory;
-import org.araa.domain.Feed;
+import org.araa.application.dto.Feed;
 import org.araa.infrastructure.utility.XMLParser;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
