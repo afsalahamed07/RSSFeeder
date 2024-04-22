@@ -35,7 +35,6 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
 
 public User registerUser(UserRegistrationDto userRegistrationDto) throws UserAlreadyExistError{
         if (userRepository.existsByUsername(userRegistrationDto.getUsername())) {
@@ -72,13 +71,4 @@ public User registerUser(UserRegistrationDto userRegistrationDto) throws UserAlr
         user.setRoles(Collections.singletonList(roles));
     }
 
-    public void login(LoginCredentialsDto loginCredentialsDto) {
-        logger.info("Logging in user: {}", loginCredentialsDto.getUsername());
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginCredentialsDto.getUsername(),
-                        loginCredentialsDto.getPassword())
-        );
-        logger.info("User logged in successfully");
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
 }
