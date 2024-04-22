@@ -1,9 +1,9 @@
-package org.araa.application.builder;
+package org.araa.application.dto;
 
 import lombok.Data;
 
 @Data
-public class LoginCredentials {
+public class LoginCredentialsDto {
     private String username;
     private String password;
 }

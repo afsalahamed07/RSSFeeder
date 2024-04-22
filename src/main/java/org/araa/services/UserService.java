@@ -1,12 +1,17 @@
 package org.araa.services;
 
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.araa.application.dto.LoginCredentialsDto;
 import org.araa.application.dto.UserRegistrationDto;
 import org.araa.application.error.UserAlreadyExistError;
 import org.araa.domain.Role;
 import org.araa.domain.User;
 import org.araa.repositories.RoleRepository;
 import org.araa.repositories.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,16 +31,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
+    private static final Logger logger = LogManager.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    // Save a new profile
-    public User registerUser(User user) {
-        return userRepository.save(user);
-    }
-
-    public User registerUser(UserRegistrationDto userRegistrationDto) throws UserAlreadyExistError{
+public User registerUser(UserRegistrationDto userRegistrationDto) throws UserAlreadyExistError{
         if (userRepository.existsByUsername(userRegistrationDto.getUsername())) {
             throw new UserAlreadyExistError("Username already exists");
         }
@@ -46,17 +50,6 @@ public class UserService implements UserDetailsService {
         setUserRole(user);
 
         return userRepository.save(user);
-    }
-
-    public User registerUser(String username) {
-        User user = new User();
-        user.setUsername(username);
-        return userRepository.save(user);
-    }
-
-    // Retrieve all profiles
-    public List<User> getAllProfiles() {
-        return userRepository.findAll();
     }
 
     @Override
@@ -77,5 +70,15 @@ public class UserService implements UserDetailsService {
     public void setUserRole(User user) {
         Role roles = roleRepository.findByName("USER").get();
         user.setRoles(Collections.singletonList(roles));
+    }
+
+    public void login(LoginCredentialsDto loginCredentialsDto) {
+        logger.info("Logging in user: {}", loginCredentialsDto.getUsername());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginCredentialsDto.getUsername(),
+                        loginCredentialsDto.getPassword())
+        );
+        logger.info("User logged in successfully");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

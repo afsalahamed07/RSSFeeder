@@ -1,8 +1,9 @@
 package org.araa.controllers;
 
 import lombok.AllArgsConstructor;
-import org.araa.application.builder.LoginCredentials;
+import org.araa.application.dto.LoginCredentialsDto;
 import org.araa.application.dto.UserRegistrationDto;
+import org.araa.application.error.UserAlreadyExistError;
 import org.araa.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,17 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegistrationDto request) {
-        userService.registerUser(request);
-        return ResponseEntity.ok("User registered successfully");
+        try{
+            userService.registerUser(request);
+            return ResponseEntity.ok("User registered successfully");
+        } catch (UserAlreadyExistError e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginCredentialsDto request) {
+        userService.login(request);
+        return ResponseEntity.ok("User logged in successfully");
     }
 }
