@@ -36,13 +36,6 @@ public class SecurityConfig {
                         requests
                                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                                 .anyRequest().authenticated()
-                )
-                .sessionManagement(sessionManagement ->
-                        sessionManagement
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .oauth2ResourceServer((oauth2) -> oauth2
-                        .jwt(Customizer.withDefaults())
                 );
 
         return http.build();
@@ -74,10 +67,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("https://my-auth-server.com");
     }
 }

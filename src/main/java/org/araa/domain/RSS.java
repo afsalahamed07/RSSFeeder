@@ -16,7 +16,4 @@ public class RSS {
 
     private String url;
 
-    @OneToMany(mappedBy = "rss", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Subscription> subscribers;
-
 }

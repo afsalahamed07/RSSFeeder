@@ -16,13 +16,15 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userID;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Subscription> subscriptions;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_subscriptions", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userID"),
+            inverseJoinColumns = @JoinColumn(name = "rss_id", referencedColumnName = "rssId"))
+    private List<RSS> subscriptions;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -34,7 +36,7 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name= "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @JoinTable(name= "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userID"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "roleID"))
     private List<Role> roles;
 }
