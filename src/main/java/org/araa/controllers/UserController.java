@@ -16,7 +16,7 @@ public class UserController {
     @PostMapping("/register_profile")
     public ResponseEntity<User> registerUser(@RequestBody UserRegistrationDto userRegistrationDto) {
         // this is I/O bound operation
-        User user = userService.saveProfile(userRegistrationDto);
+        User user = userService.registerUser(userRegistrationDto);
         return ResponseEntity.ok(user);
     }
 }
