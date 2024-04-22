@@ -1,42 +1,42 @@
 package org.araa.services;
 
 import lombok.AllArgsConstructor;
-import org.araa.domain.Profile;
-import org.araa.repositories.ProfileRepository;
+import org.araa.application.dto.UserRegistrationDto;
+import org.araa.domain.User;
+import org.araa.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
 @Service
 public class ProfileService {
 
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
 
     // Save a new profile
-    public Profile saveProfile(Profile profile) {
-        return profileRepository.save(profile);
+    public User saveProfile(User user) {
+        return userRepository.save(user);
     }
 
-    public Profile saveProfile(String username, String password, String name, String email) {
-        Profile profile = new Profile();
-        profile.setUsername(username);
-        profile.setPassword(password);
-        profile.setName(name);
-        profile.setEmail(email);
-        return profileRepository.save(profile);
+    public User saveProfile(UserRegistrationDto userRegistrationDto) {
+        User user = new User();
+        user.setUsername(userRegistrationDto.getUsername());
+        user.setName(userRegistrationDto.getName());
+        user.setEmail(userRegistrationDto.getEmail());
+        user.setPassword(userRegistrationDto.getPassword());
+        return userRepository.save(user);
     }
 
-    public Profile saveProfile(String username) {
-        Profile profile = new Profile();
-        profile.setUsername(username);
-        return profileRepository.save(profile);
+    public User saveProfile(String username) {
+        User user = new User();
+        user.setUsername(username);
+        return userRepository.save(user);
     }
 
     // Retrieve all profiles
-    public List<Profile> getAllProfiles() {
-        return profileRepository.findAll();
+    public List<User> getAllProfiles() {
+        return userRepository.findAll();
     }
 
 //    public void addRssFeedToProfile(String username, String rssFeed) {

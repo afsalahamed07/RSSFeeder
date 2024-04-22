@@ -13,7 +13,7 @@ public class Subscription {
     @Id
     @ManyToOne
     @JoinColumn(name = "username")
-    private Profile profile;
+    private User user;
 
     @Id
     @ManyToOne

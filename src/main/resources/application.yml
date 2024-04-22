@@ -16,6 +16,12 @@ spring:
       host: localhost
       port: 6379
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/auth
+
 #  devtools:
 #    livereload:
 #      enabled: false

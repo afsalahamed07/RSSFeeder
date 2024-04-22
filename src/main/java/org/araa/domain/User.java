@@ -9,7 +9,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "profiles")
-public class Profile {
+public class User {
     @Id
     private String username;
 
