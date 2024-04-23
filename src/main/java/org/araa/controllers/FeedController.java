@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.concurrent.CompletableFuture;
 
 
-@RestController
 @AllArgsConstructor
+@RestController("/api/feed")
 public class FeedController {
     private final FeedService feedService;
     private static final Logger logger = LogManager.getLogger(FeedController.class);

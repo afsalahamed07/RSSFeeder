@@ -1,10 +1,10 @@
-package org.araa.infrastructure.utility;
+package org.araa.application.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.araa.infrastructure.SecurityConstants;
+import org.araa.infrastructure.config.security.SecurityConstants;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

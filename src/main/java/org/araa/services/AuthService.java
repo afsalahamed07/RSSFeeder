@@ -3,7 +3,7 @@ package org.araa.services;
 import lombok.AllArgsConstructor;
 import org.araa.application.dto.AuthResponseDTO;
 import org.araa.application.dto.LoginCredentialsDto;
-import org.araa.infrastructure.utility.JWTGenerator;
+import org.araa.application.security.JWTGenerator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
