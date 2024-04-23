@@ -12,6 +12,7 @@ public class RSS {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rss_id")
     private Long rssId;
 
     private String url;

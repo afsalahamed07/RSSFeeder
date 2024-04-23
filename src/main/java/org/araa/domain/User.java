@@ -15,14 +15,15 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "username", nullable = false)
     private String username;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_subscriptions", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userID"),
-            inverseJoinColumns = @JoinColumn(name = "rss_id", referencedColumnName = "rssId"))
+    @JoinTable(name = "user_subscriptions", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "rss_id", referencedColumnName = "rss_id"))
     private List<RSS> subscriptions;
 
     @Column(name = "name", nullable = false)
@@ -35,7 +36,7 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name= "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userID"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "roleID"))
+    @JoinTable(name= "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
     private List<Role> roles;
 }
