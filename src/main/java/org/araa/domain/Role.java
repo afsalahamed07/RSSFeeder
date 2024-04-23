@@ -3,18 +3,14 @@ package org.araa.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Set;
-
-@Entity
 @Data
-@Table(name = "rss")
-public class RSS {
-
+@Entity
+@Table(name = "roles")
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rss_id")
-    private Long rssId;
+    @Column(name = "role_id")
+    private Long roleId;
 
-    private String url;
-
+    private String name;
 }

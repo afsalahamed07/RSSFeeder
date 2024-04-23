@@ -1,20 +1,18 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testDB
-    driverClassName: org.h2.Driver
+    url: jdbc:postgresql://localhost:5432/rss_feeder
+    driverClassName: org.postgresql.Driver
     username: sa
     password: password
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-  h2:
-    console:
-      enabled: true
   data:
     redis:
       host: localhost
       port: 6379
+
 
 #  devtools:
 #    livereload:
@@ -28,3 +26,4 @@ logging:
     org:
       springframework:
         security: DEBUG
+    root: info
