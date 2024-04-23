@@ -1,6 +1,7 @@
 package org.araa.controllers;
 
 import lombok.AllArgsConstructor;
+import org.araa.application.dto.AuthResponseDTO;
 import org.araa.application.dto.LoginCredentialsDto;
 import org.araa.application.dto.UserRegistrationDto;
 import org.araa.application.error.UserAlreadyExistError;
@@ -28,8 +29,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginCredentialsDto request) {
-        authService.authenticate(request);
-        return ResponseEntity.ok("User logged in successfully");
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginCredentialsDto request) {
+        AuthResponseDTO authResponseDTO =  authService.authenticate(request);
+        return ResponseEntity.ok(authResponseDTO);
     }
 }
