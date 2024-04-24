@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.UserRegistrationDto;
+import org.araa.application.dto.UserRegistrationResponseDTO;
 import org.araa.application.error.UserAlreadyExistError;
 import org.araa.domain.Role;
 import org.araa.domain.User;
 import org.araa.repositories.RoleRepository;
 import org.araa.repositories.UserRepository;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,10 +17,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -31,8 +30,8 @@ public class UserService implements UserDetailsService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-public User registerUser(UserRegistrationDto userRegistrationDto) throws UserAlreadyExistError{
-        if (userRepository.existsByUsername(userRegistrationDto.getUsername())) {
+public UserRegistrationResponseDTO registerUser(UserRegistrationDto userRegistrationDto) throws UserAlreadyExistError{
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(userRegistrationDto.getUsername()))) {
             throw new UserAlreadyExistError("Username already exists");
         }
         User user = new User();
@@ -40,10 +39,18 @@ public User registerUser(UserRegistrationDto userRegistrationDto) throws UserAlr
         user.setName(userRegistrationDto.getName());
         user.setEmail(userRegistrationDto.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
+        user.setCreatedDate(new Date());
 
         setUserRole(user);
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        UserRegistrationResponseDTO userRegistrationResponseDTO = new UserRegistrationResponseDTO();
+        userRegistrationResponseDTO.setUsername(user.getUsername());
+        userRegistrationResponseDTO.setName(user.getName());
+        userRegistrationResponseDTO.setEmail(user.getEmail());
+
+        return userRegistrationResponseDTO;
     }
 
     @Override
@@ -54,15 +61,17 @@ public User registerUser(UserRegistrationDto userRegistrationDto) throws UserAlr
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
 
-    private Collection<GrantedAuthority> mapRolesToAuthorities(List<Role> roles) {
+    private List<SimpleGrantedAuthority> mapRolesToAuthorities(List<Role> roles) {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+                .map(role -> new SimpleGrantedAuthority(role.getType()))
+                .toList();
     }
 
 
     public void setUserRole(User user) {
-        Role roles = roleRepository.findByName("USER").get();
+        Role roles = roleRepository.findByType("USER").orElseThrow(
+                () -> new RuntimeException("Role not found")
+        );
         user.setRoles(Collections.singletonList(roles));
     }
 
