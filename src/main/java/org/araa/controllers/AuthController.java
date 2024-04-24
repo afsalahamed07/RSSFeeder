@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.araa.application.dto.AuthResponseDTO;
 import org.araa.application.dto.LoginCredentialsDto;
 import org.araa.application.dto.UserRegistrationDto;
+import org.araa.application.dto.UserRegistrationResponseDTO;
 import org.araa.application.error.UserAlreadyExistError;
 import org.araa.services.AuthService;
 import org.araa.services.UserService;
@@ -19,12 +20,12 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegistrationDto request) {
+    public ResponseEntity<UserRegistrationResponseDTO> register(@RequestBody UserRegistrationDto request) {
         try{
-            userService.registerUser(request);
-            return ResponseEntity.ok("User registered successfully");
+            UserRegistrationResponseDTO userRegistrationResponseDTO = userService.registerUser(request);
+            return ResponseEntity.ok(userRegistrationResponseDTO);
         } catch (UserAlreadyExistError e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
