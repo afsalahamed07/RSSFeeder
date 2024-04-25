@@ -16,37 +16,37 @@ import java.util.Date;
 public class JWTGenerator {
 
     // TODO: replace the secret key generation logic
-    private final SecretKey key = Keys.hmacShaKeyFor(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
+    private final SecretKey key = Keys.hmacShaKeyFor( Keys.secretKeyFor( SignatureAlgorithm.HS512 ).getEncoded() );
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken( Authentication authentication ) {
         String username = authentication.getName();
         Date currentDate = new Date();
-        Date expirationDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION_TIME);
+        Date expirationDate = new Date( currentDate.getTime() + SecurityConstants.JWT_EXPIRATION_TIME );
 
 
         return Jwts.builder()
-                .subject(username)
-                .issuedAt(currentDate)
-                .expiration(expirationDate)
-                .signWith(key, Jwts.SIG.HS512)
+                .subject( username )
+                .issuedAt( currentDate )
+                .expiration( expirationDate )
+                .signWith( key, Jwts.SIG.HS512 )
                 .compact();
     }
 
-    public String getUsernameFromJWT(String token) {
+    public String getUsernameFromJWT( String token ) {
         Claims claims = Jwts.parser()
-                .verifyWith(key)
+                .verifyWith( key )
                 .build()
-                .parseSignedClaims(token)
+                .parseSignedClaims( token )
                 .getPayload();
         return claims.getSubject();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken( String token ) {
         try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            Jwts.parser().verifyWith( key ).build().parseSignedClaims( token );
             return true;
-        } catch (Exception e) {
-            throw new AuthenticationCredentialsNotFoundException("JWT was expired or invalid.");
+        } catch ( Exception e ) {
+            throw new AuthenticationCredentialsNotFoundException( "JWT was expired or invalid." );
         }
     }
 }

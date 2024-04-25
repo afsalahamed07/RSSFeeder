@@ -25,38 +25,38 @@ public class SecurityConfig {
     private JwtAuthEntryPoint authEntryPoint;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain( HttpSecurity http ) throws Exception {
         http
-                .csrf(CsrfConfigurer::disable)
-                .securityContext(securityContext ->
+                .csrf( CsrfConfigurer::disable )
+                .securityContext( securityContext ->
                         securityContext
                                 .securityContextRepository(
                                         new DelegatingSecurityContextRepository(
                                                 new RequestAttributeSecurityContextRepository(),
                                                 new HttpSessionSecurityContextRepository()
                                         )
-                                ))
-                .exceptionHandling(exceptionHandling ->
+                                ) )
+                .exceptionHandling( exceptionHandling ->
                         exceptionHandling
-                                .authenticationEntryPoint(authEntryPoint)
+                                .authenticationEntryPoint( authEntryPoint )
                 )
-                .sessionManagement(sessionManagement ->
+                .sessionManagement( sessionManagement ->
                         sessionManagement
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                                .sessionCreationPolicy( SessionCreationPolicy.STATELESS )
                 )
-                .authorizeHttpRequests(requests ->
+                .authorizeHttpRequests( requests ->
                         requests
-                                .requestMatchers("api/auth/**").permitAll()
+                                .requestMatchers( "api/auth/**" ).permitAll()
                                 .anyRequest().authenticated()
                 );
 
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class );
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration) throws Exception {
+            AuthenticationConfiguration configuration ) throws Exception {
         return configuration.getAuthenticationManager();
     }
 

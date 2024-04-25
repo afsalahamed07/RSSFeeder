@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LogManager.getLogger(JWTAuthenticationFilter.class);
+    private static final Logger logger = LogManager.getLogger( JWTAuthenticationFilter.class );
 
     @Autowired
     private JWTGenerator jwtGenerator;
@@ -28,29 +28,29 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private UserService userService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.info("Request received to authenticate user");
-        String token = getJWTFromRequest(request);
-        logger.info("Token received: {}", token);
+    protected void doFilterInternal( HttpServletRequest request, HttpServletResponse response, FilterChain filterChain ) throws ServletException, IOException {
+        logger.info( "Request received to authenticate user" );
+        String token = getJWTFromRequest( request );
+        logger.info( "Token received: {}", token );
 
-        if (StringUtils.hasText(token) && jwtGenerator.validateToken(token)) {
-            String username = jwtGenerator.getUsernameFromJWT(token);
-            UserDetails userDetails = userService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
+        if ( StringUtils.hasText( token ) && jwtGenerator.validateToken( token ) ) {
+            String username = jwtGenerator.getUsernameFromJWT( token );
+            UserDetails userDetails = userService.loadUserByUsername( username );
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( userDetails,
                     null,
-                    userDetails.getAuthorities());
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            logger.info("User authenticated");
+                    userDetails.getAuthorities() );
+            authenticationToken.setDetails( new WebAuthenticationDetailsSource().buildDetails( request ) );
+            SecurityContextHolder.getContext().setAuthentication( authenticationToken );
+            logger.info( "User authenticated" );
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter( request, response );
     }
 
-    private String getJWTFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+    private String getJWTFromRequest( HttpServletRequest request ) {
+        String bearerToken = request.getHeader( "Authorization" );
+        if ( bearerToken != null && bearerToken.startsWith( "Bearer " ) ) {
+            return bearerToken.substring( 7 );
         }
         return null;
     }

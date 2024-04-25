@@ -1,6 +1,5 @@
 package org.araa.infrastructure.config;
 
-import org.araa.infrastructure.utility.CustomRedisSerializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +15,14 @@ import java.time.Duration;
 @EnableCaching
 public class RedisCacheConfig {
 
-    @Bean(name = "RedisCacheManager")
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig(Thread.currentThread().getContextClassLoader())
-                .entryTtl(Duration.ofMinutes(60))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    @Bean( name = "redisCacheManager" )
+    public RedisCacheManager cacheManager( RedisConnectionFactory connectionFactory ) {
+        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig( Thread.currentThread().getContextClassLoader() )
+                .entryTtl( Duration.ofMinutes( 60 ) )
+                .serializeValuesWith( RedisSerializationContext.SerializationPair.fromSerializer( new GenericJackson2JsonRedisSerializer() ) );
 
-        return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(cacheConfiguration)
+        return RedisCacheManager.builder( connectionFactory )
+                .cacheDefaults( cacheConfiguration )
                 .build();
     }
 }

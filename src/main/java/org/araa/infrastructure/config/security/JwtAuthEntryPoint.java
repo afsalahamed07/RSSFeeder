@@ -1,6 +1,5 @@
 package org.araa.infrastructure.config.security;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
@@ -13,10 +12,11 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
-    private final Logger logger = LogManager.getLogger(JwtAuthEntryPoint.class);
+    private final Logger logger = LogManager.getLogger( JwtAuthEntryPoint.class );
+
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        logger.info("Unauthorized error. Message - {}", authException.getMessage());
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+    public void commence( HttpServletRequest request, HttpServletResponse response, AuthenticationException authException ) throws IOException {
+        logger.info( "Unauthorized error. Message - {}", authException.getMessage() );
+        response.sendError( HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage() );
     }
 }
