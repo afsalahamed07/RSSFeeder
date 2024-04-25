@@ -1,16 +1,19 @@
 package org.araa.infrastructure.utility;
 
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
+import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 @UtilityClass
@@ -31,15 +34,27 @@ public class XMLParser {
         return connection.getInputStream();
     }
 
-    public static SyndFeed parse( String feedUrl ) throws Exception {
+    public static SyndFeed parse( String feedUrl ) throws IOException, JDOMException, FeedException{
         try ( InputStream stream = openFeedStream( feedUrl ) ) {
             logger.info( "Parsing feed for {}", feedUrl );
             Document document = new SAXBuilder().build( stream );
             SyndFeedInput input = new SyndFeedInput();
             return input.build( document );
-        } catch ( Exception e ) {
-            logger.error( "Error parsing feed for {}", feedUrl, e );
-            throw new Exception( "Error parsing feed for " + feedUrl, e );
+        } catch ( MalformedURLException e ) {
+            logger.error( "Malformed URL: {}", feedUrl, e );
+            throw new MalformedURLException( "Malformed URL: " + feedUrl );
+        } catch ( IOException e ) {
+            logger.error( "IOException while reading the feed: {}", feedUrl, e );
+            throw new IOException( "IOException while reading the feed: " + feedUrl, e );
+        } catch ( JDOMException e ) {
+            logger.error( "Error parsing XML: {}", feedUrl, e );
+            throw new JDOMException( "Error parsing XML: " + feedUrl, e );
+        } catch ( FeedException e ) {
+            logger.error( "Error parsing feed: {}", feedUrl, e );
+            throw new FeedException( "Error parsing feed: " + feedUrl, e );
+        } catch ( NullPointerException e ) {
+            logger.error( "Null Pointer Exception: {}", feedUrl, e );
+            throw new NullPointerException( "Null Pointer Exception: " + feedUrl );
         }
     }
 }

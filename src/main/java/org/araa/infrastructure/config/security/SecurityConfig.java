@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests( requests ->
                         requests
                                 .requestMatchers( "api/auth/**" ).permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 );
 
         http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class );

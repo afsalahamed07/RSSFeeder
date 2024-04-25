@@ -21,6 +21,12 @@ public class RSS {
     @Column( name = "title", nullable = false )
     private String title;
 
+    @Column( name = "description", nullable = false )
+    private String description;
+
+    @Column( name = "feed_type", nullable = false )
+    private String feedType;
+
     @Column( name = "created_at" )
     private Date createdDate;
 
