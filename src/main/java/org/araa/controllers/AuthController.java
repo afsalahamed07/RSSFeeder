@@ -13,25 +13,25 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping( "/api/auth" )
 public class AuthController {
     private final UserService userService;
     private final AuthService authService;
 
 
-    @PostMapping("/register")
-    public ResponseEntity<UserRegistrationResponseDTO> register(@RequestBody UserRegistrationDto request) {
-        try{
-            UserRegistrationResponseDTO userRegistrationResponseDTO = userService.registerUser(request);
-            return ResponseEntity.ok(userRegistrationResponseDTO);
-        } catch (UserAlreadyExistError e) {
+    @PostMapping( "/register" )
+    public ResponseEntity<UserRegistrationResponseDTO> register( @RequestBody UserRegistrationDto request ) {
+        try {
+            UserRegistrationResponseDTO userRegistrationResponseDTO = userService.registerUser( request );
+            return ResponseEntity.ok( userRegistrationResponseDTO );
+        } catch ( UserAlreadyExistError e ) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginCredentialsDto request) {
-        AuthResponseDTO authResponseDTO =  authService.authenticate(request);
-        return ResponseEntity.ok(authResponseDTO);
+    @PostMapping( "/login" )
+    public ResponseEntity<AuthResponseDTO> login( @RequestBody LoginCredentialsDto request ) {
+        AuthResponseDTO authResponseDTO = authService.authenticate( request );
+        return ResponseEntity.ok( authResponseDTO );
     }
 }

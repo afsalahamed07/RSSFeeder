@@ -11,39 +11,39 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+@Table( name = "users" )
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @Column( name = "user_id" )
     private Long userId;
 
-    @Column(name = "username", nullable = false)
+    @Column( name = "username", nullable = false )
     private String username;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_subscriptions", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "rss_id", referencedColumnName = "rss_id"))
+    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @JoinTable( name = "user_subscriptions", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
+            inverseJoinColumns = @JoinColumn( name = "rss_id", referencedColumnName = "rss_id" ) )
     private List<RSS> subscriptions;
 
-    @Column(name = "name", nullable = false)
+    @Column( name = "name", nullable = false )
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column( name = "email", nullable = false )
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column( name = "password", nullable = false )
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name= "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
+    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @JoinTable( name = "user_roles", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
+            inverseJoinColumns = @JoinColumn( name = "role_id", referencedColumnName = "role_id" ) )
     private List<Role> roles;
 
-    @Column(name = "created_at")
+    @Column( name = "created_at" )
     private Date createdDate;
 
-    @Column(name = "updated_at")
+    @Column( name = "updated_at" )
     private Date updatedDate;
 }

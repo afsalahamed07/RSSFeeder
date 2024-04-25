@@ -7,24 +7,24 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "rss")
+@Table( name = "rss" )
 public class RSS {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rss_id")
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @Column( name = "rss_id" )
     private Long rssId;
 
-    @Column(name = "url", nullable = false)
+    @Column( name = "url", nullable = false )
     private String url;
 
-    @Column(name = "title", nullable = false)
+    @Column( name = "title", nullable = false )
     private String title;
 
-    @Column(name = "created_at")
+    @Column( name = "created_at" )
     private Date createdDate;
 
-    @Column(name = "updated_at")
+    @Column( name = "updated_at" )
     private Date updatedDate;
 
 }

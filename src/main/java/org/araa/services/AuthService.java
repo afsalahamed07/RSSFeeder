@@ -17,15 +17,15 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private JWTGenerator jwtGenerator;
 
-    public AuthResponseDTO authenticate(LoginCredentialsDto loginCredentialsDto) {
+    public AuthResponseDTO authenticate( LoginCredentialsDto loginCredentialsDto ) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginCredentialsDto.getUsername(),
-                        loginCredentialsDto.getPassword())
+                new UsernamePasswordAuthenticationToken( loginCredentialsDto.getUsername(),
+                        loginCredentialsDto.getPassword() )
         );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication( authentication );
 
-        String token = jwtGenerator.generateToken(authentication);
+        String token = jwtGenerator.generateToken( authentication );
 
-        return new AuthResponseDTO(token);
+        return new AuthResponseDTO( token );
     }
 }

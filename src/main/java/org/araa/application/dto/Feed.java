@@ -18,7 +18,7 @@ public class Feed {
      * It is used to extract the required fields from SyndFeed
      * and send it to the client
      */
-    private final static Logger logger = LogManager.getLogger(Feed.class);
+    private static final Logger logger = LogManager.getLogger( Feed.class );
 
     private String title;
     private String description;

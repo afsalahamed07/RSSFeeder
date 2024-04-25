@@ -11,13 +11,13 @@ public class FeedFactory {
 
     private final EntryBuilder entryBuilder;
 
-    public Feed createFeed(SyndFeed syndFeed) {
+    public Feed createFeed( SyndFeed syndFeed ) {
         Feed feed = new Feed();
-        feed.setTitle(syndFeed.getTitle());
-        feed.setDescription(syndFeed.getDescription());
-        feed.setFeedType(syndFeed.getFeedType());
-        feed.setLink(syndFeed.getLink());
-        feed.setEntries(syndFeed.getEntries().stream().map(entryBuilder::buildEntry).toList());
+        feed.setTitle( syndFeed.getTitle() );
+        feed.setDescription( syndFeed.getDescription() );
+        feed.setFeedType( syndFeed.getFeedType() );
+        feed.setLink( syndFeed.getLink() );
+        feed.setEntries( syndFeed.getEntries().stream().map( entryBuilder::buildEntry ).toList() );
         return feed;
     }
 }
