@@ -42,6 +42,11 @@ public class User {
             inverseJoinColumns = @JoinColumn( name = "role_id", referencedColumnName = "role_id" ) )
     private List<Role> roles;
 
+    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @JoinTable( name = "user_entry", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
+            inverseJoinColumns = @JoinColumn( name = "entry_id", referencedColumnName = "entry_id" ) )
+    private List<Entry> entries;
+
     @Column( name = "created_at" )
     private Date createdDate;
 
