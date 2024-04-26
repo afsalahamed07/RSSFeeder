@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -25,7 +26,7 @@ public class User {
     @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
     @JoinTable( name = "user_subscriptions", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
             inverseJoinColumns = @JoinColumn( name = "rss_id", referencedColumnName = "rss_id" ) )
-    private List<RSS> subscriptions;
+    private Set<RSS> subscriptions;
 
     @Column( name = "name", nullable = false )
     private String name;

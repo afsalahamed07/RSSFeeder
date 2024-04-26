@@ -1,11 +1,13 @@
 package org.araa.infrastructure.utility;
 
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
+import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import java.io.IOException;
@@ -31,15 +33,14 @@ public class XMLParser {
         return connection.getInputStream();
     }
 
-    public static SyndFeed parse( String feedUrl ) throws Exception {
+    public static SyndFeed parse( String feedUrl ) throws FeedException {
         try ( InputStream stream = openFeedStream( feedUrl ) ) {
             logger.info( "Parsing feed for {}", feedUrl );
             Document document = new SAXBuilder().build( stream );
             SyndFeedInput input = new SyndFeedInput();
             return input.build( document );
-        } catch ( Exception e ) {
-            logger.error( "Error parsing feed for {}", feedUrl, e );
-            throw new Exception( "Error parsing feed for " + feedUrl, e );
+        } catch ( IOException  | JDOMException  | FeedException e){
+            throw new FeedException( "Error parsing feed", e );
         }
     }
 }

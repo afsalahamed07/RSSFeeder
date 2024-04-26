@@ -7,5 +7,5 @@ public class SecurityConstants {
     }
 
     public static final long JWT_EXPIRATION_TIME = 864_000_000; // 10 days
-    public static final String JWT_SECRET = "secret";
+    public static final String JWT_SECRET = "secret_big_enough_for_production_security_1234567890_hopefully";
 }
