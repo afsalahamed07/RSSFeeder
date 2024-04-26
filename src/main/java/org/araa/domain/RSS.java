@@ -15,7 +15,7 @@ public class RSS {
     @Column( name = "rss_id" )
     private Long rssId;
 
-    @Column( name = "url", nullable = false )
+    @Column( name = "url", nullable = false, unique = true )
     private String url;
 
     @Column( name = "title", nullable = false )

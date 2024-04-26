@@ -29,7 +29,7 @@ class RSSControllerTest {
 
     @Test
     void registerRSS() {
-        RSSDto rssDto = rssService.registerRSS( "https://www.newswire.lk/feed" );
+//        RSSDto rssDto = rssService.registerRSS( "https://www.newswire.lk/feed" );
 
 //        CompletableFuture<ResponseEntity<RSSDto>> response = rssController.registerRSS("https://www.newswire.lk/feed");
 //

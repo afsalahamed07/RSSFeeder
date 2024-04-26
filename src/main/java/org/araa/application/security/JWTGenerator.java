@@ -2,7 +2,6 @@ package org.araa.application.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.araa.infrastructure.config.security.SecurityConstants;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -10,13 +9,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+
+import static org.araa.infrastructure.config.security.SecurityConstants.JWT_SECRET;
 
 @Component
 public class JWTGenerator {
 
-    // TODO: replace the secret key generation logic
-    private final SecretKey key = Keys.hmacShaKeyFor( Keys.secretKeyFor( SignatureAlgorithm.HS512 ).getEncoded() );
+    private final SecretKey key = Keys.hmacShaKeyFor( JWT_SECRET.getBytes( StandardCharsets.UTF_8 ) );
 
     public String generateToken( Authentication authentication ) {
         String username = authentication.getName();
@@ -28,7 +29,7 @@ public class JWTGenerator {
                 .subject( username )
                 .issuedAt( currentDate )
                 .expiration( expirationDate )
-                .signWith( key, Jwts.SIG.HS512 )
+                .signWith( key )
                 .compact();
     }
 

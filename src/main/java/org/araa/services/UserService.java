@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.UserRegistrationDto;
 import org.araa.application.dto.UserRegistrationResponseDTO;
 import org.araa.application.error.UserAlreadyExistError;
+import org.araa.domain.RSS;
 import org.araa.domain.Role;
 import org.araa.domain.User;
 import org.araa.repositories.RoleRepository;
@@ -59,6 +60,15 @@ public class UserService implements UserDetailsService {
                 .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
 
         return new org.springframework.security.core.userdetails.User( user.getUsername(), user.getPassword(), mapRolesToAuthorities( user.getRoles() ) );
+    }
+
+
+    public void subscribeRSS( String username, RSS rss ) {
+        User user = userRepository.findByUsername( username )
+                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+        user.getSubscriptions().add( rss );
+        user.setUpdatedDate( new Date() );
+        userRepository.save( user );
     }
 
     private List<SimpleGrantedAuthority> mapRolesToAuthorities( List<Role> roles ) {
