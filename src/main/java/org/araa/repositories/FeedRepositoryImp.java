@@ -43,6 +43,7 @@ public class FeedRepositoryImp implements FeedRepository {
             // Feed not found in cache, fetch and parse it
             try {
                 SyndFeed syndFeed = XMLParser.parse( rss );
+                syndFeed.setUri( rss );
                 feed = feedFactory.createFeed( syndFeed );
                 return feed;
             } catch ( Exception e ) {

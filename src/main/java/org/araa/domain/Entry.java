@@ -26,7 +26,7 @@ public class Entry {
     private String title;
 
     @Column( nullable = false, unique = true )
-    private String link;
+    private String url;
 
     @Column( name = "published_date" )
     private Date publishedDate;

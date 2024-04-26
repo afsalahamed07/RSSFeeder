@@ -11,6 +11,7 @@ import org.araa.application.dto.RSSDto;
 import org.araa.domain.RSS;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.repositories.RSSRepository;
+import org.hibernate.FetchNotFoundException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +29,7 @@ public class RSSService {
     private final UserService userService;
 
 
-    public RSSDto registerRSS( String url ) throws FeedException {
+    public RSS registerRSS( String url ) throws FeedException {
         RSS rss;
 
         if ( SecurityContextHolder.getContext().getAuthentication() == null ) {
@@ -53,7 +54,7 @@ public class RSSService {
             }
 
         }
-        return new RSSDto( rss );
+        return rss;
     }
 
     private RSS createRSSfromSyndFeed( @NonNull SyndFeed syndFeed, String url ) {
@@ -64,6 +65,13 @@ public class RSSService {
         rss.setTitle( syndFeed.getTitle() );
         rss.setCreatedDate( new Date() );
         return rss;
+    }
+
+    public RSS getRSS( String url ) {
+        if ( rssRepository.existsByUrl( url ) )
+            return rssRepository.findByUrl( url );
+
+        throw new FetchNotFoundException( "RSS", url);
     }
 
 }

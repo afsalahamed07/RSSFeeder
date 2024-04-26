@@ -20,7 +20,7 @@ public class RSSController {
     @PostMapping( "/register_rss" )
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
         try {
-            RSSDto rssDto = rssService.registerRSS( url );
+            RSSDto rssDto = new RSSDto( rssService.registerRSS( url ) );
             return ResponseEntity.ok( rssDto );
 
         } catch ( FeedException e ) {

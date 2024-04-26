@@ -4,14 +4,17 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.araa.application.dto.Feed;
+import org.araa.services.RSSService;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class FeedFactory {
     private final EntryBuilder entryBuilder;
+    private final RSSService rssService;
 
     public Feed createFeed( @NonNull SyndFeed syndFeed ) {
+
         Feed feed = new Feed();
         feed.setTitle( syndFeed.getTitle() );
         feed.setDescription( syndFeed.getDescription() );
