@@ -20,9 +20,7 @@ public class RSSController {
     private final RSSService rssService;
 
     @PostMapping( "/register_rss" )
-    public CompletableFuture<ResponseEntity<RSSDto>> registerRSS( @RequestParam String url ) {
-        return CompletableFuture.supplyAsync( () -> rssService.registerRSS( url ) )
-                .thenApply( ResponseEntity::ok )
-                .exceptionally( e -> ResponseEntity.badRequest().build() );
+    public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
+        return ResponseEntity.ok( rssService.registerRSS( url ) );
     }
 }
