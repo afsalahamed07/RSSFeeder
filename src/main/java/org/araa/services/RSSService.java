@@ -29,6 +29,7 @@ public class RSSService {
 
 
     public RSSDto registerRSS( String url ) throws FeedException {
+        RSS rss;
 
         if ( SecurityContextHolder.getContext().getAuthentication() == null ) {
             logger.error( "User not authenticated" );
@@ -37,39 +38,22 @@ public class RSSService {
         }
 
         UserDetails userDetails = ( UserDetails ) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        RSSDto rssDto = new RSSDto();
 
         if ( rssRepository.existsByUrl( url ) ) {
-            RSS rss = rssRepository.findByUrl( url );
-
+            rss = rssRepository.findByUrl( url );
             userService.subscribeRSS( userDetails.getUsername(), rss );
-            rssDto.setUrl( rss.getUrl() );
-            rssDto.setFeedType( rss.getFeedType() );
-            rssDto.setDescription( rss.getDescription() );
-            rssDto.setTitle( rss.getTitle() );
         } else {
             try {
                 SyndFeed syndFeed = XMLParser.parse( url );
-                RSS rss = createRSSfromSyndFeed( syndFeed , url);
-
+                rss = createRSSfromSyndFeed( syndFeed, url );
                 rss = rssRepository.save( rss );
-
-                rssDto.setUrl( rss.getUrl() );
-                rssDto.setFeedType( rss.getFeedType() );
-                rssDto.setDescription( rss.getDescription() );
-                rssDto.setTitle( rss.getTitle() );
-
-
                 userService.subscribeRSS( userDetails.getUsername(), rss );
-
             } catch ( FeedException e ) {
                 throw new ParsingFeedException( "Failed to parse and create feed", e );
             }
 
         }
-
-
-        return rssDto;
+        return new RSSDto( rss );
     }
 
     private RSS createRSSfromSyndFeed( @NonNull SyndFeed syndFeed, String url ) {

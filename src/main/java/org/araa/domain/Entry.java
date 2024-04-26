@@ -45,7 +45,15 @@ public class Entry {
     private Set<Category> categories;
 
 
+
+    @Column( name = "created_at" )
+    private Date createdDate;
+
+    @Column( name = "updated_at" )
+    private Date updatedDate;
+
     public void addCategory( Category category ) {
         categories.add( category );
     }
+
 }
