@@ -45,6 +45,8 @@ public class Entry {
     private Set<Category> categories;
 
 
+    private String link;
+
 
     @Column( name = "created_at" )
     private Date createdDate;
