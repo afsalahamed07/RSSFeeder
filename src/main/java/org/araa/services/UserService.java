@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -30,6 +31,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RSSService rssService;
 
     public UserRegistrationResponseDTO registerUser( UserRegistrationDto userRegistrationDto ) throws UserAlreadyExistError {
         if ( Boolean.TRUE.equals( userRepository.existsByUsername( userRegistrationDto.getUsername() ) ) ) {
@@ -85,4 +87,14 @@ public class UserService implements UserDetailsService {
         user.setRoles( Collections.singletonList( roles ) );
     }
 
+    public Set<RSS> getUserSubscriptions( String username ) {
+        User user = userRepository.findByUsername( username )
+                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+        return user.getSubscriptions();
+    }
+
+    public User getUserByUsername( String username ) {
+        return userRepository.findByUsername( username )
+                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+    }
 }

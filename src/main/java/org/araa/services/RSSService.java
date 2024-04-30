@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.RSSDto;
 import org.araa.domain.RSS;
+import org.araa.domain.User;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.repositories.RSSRepository;
 import org.hibernate.FetchNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -67,11 +69,22 @@ public class RSSService {
         return rss;
     }
 
-    public RSS getRSS( String url ) {
+    public RSS getRSS( String url ) throws FetchNotFoundException {
         if ( rssRepository.existsByUrl( url ) )
             return rssRepository.findByUrl( url );
 
         throw new FetchNotFoundException( "RSS", url);
     }
 
+    public Set<RSS> getRSSByUserId( Long userId ) {
+        return rssRepository.findByUserId( userId );
+    }
+
+    public Set<RSS> getAllRSS() {
+        UserDetails userDetails = ( UserDetails ) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = userService.getUserByUsername( userDetails.getUsername() );
+
+        return rssRepository.findByUserId( user.getUserId() );
+    }
 }
