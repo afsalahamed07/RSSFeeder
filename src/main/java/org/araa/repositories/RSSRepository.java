@@ -11,6 +11,4 @@ public interface RSSRepository extends JpaRepository<RSS, Long> {
     boolean existsByUrl(String url);
 
     RSS findByUrl( String url );
-
-    Set<RSS> findByUserId( Long userId );
 }

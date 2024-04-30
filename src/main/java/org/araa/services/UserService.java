@@ -31,7 +31,6 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RSSService rssService;
 
     public UserRegistrationResponseDTO registerUser( UserRegistrationDto userRegistrationDto ) throws UserAlreadyExistError {
         if ( Boolean.TRUE.equals( userRepository.existsByUsername( userRegistrationDto.getUsername() ) ) ) {

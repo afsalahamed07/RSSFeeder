@@ -40,12 +40,4 @@ public class RSSController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-    @GetMapping( "/fetch_all_rss" )
-    public ResponseEntity<Set<RSSDto>> fetchAllRSS() {
-        Set<RSS> rss = rssService.getAllRSS();
-        Set<RSSDto> rssDtos = rss.stream().map( RSSDto::new ).collect( Collectors.toSet() );
-        return ResponseEntity.ok( rssDtos );
-    }
-
 }

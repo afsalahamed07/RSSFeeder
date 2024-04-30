@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -55,6 +56,9 @@ public class Entry {
     private Date updatedDate;
 
     public void addCategory( Category category ) {
+        if ( categories == null ) {
+            categories = new HashSet<>();
+        }
         categories.add( category );
     }
 

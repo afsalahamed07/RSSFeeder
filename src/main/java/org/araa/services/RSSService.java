@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.araa.application.dto.RSSDto;
 import org.araa.domain.RSS;
 import org.araa.domain.User;
 import org.araa.infrastructure.utility.XMLParser;
@@ -73,18 +72,6 @@ public class RSSService {
         if ( rssRepository.existsByUrl( url ) )
             return rssRepository.findByUrl( url );
 
-        throw new FetchNotFoundException( "RSS", url);
-    }
-
-    public Set<RSS> getRSSByUserId( Long userId ) {
-        return rssRepository.findByUserId( userId );
-    }
-
-    public Set<RSS> getAllRSS() {
-        UserDetails userDetails = ( UserDetails ) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userService.getUserByUsername( userDetails.getUsername() );
-
-        return rssRepository.findByUserId( user.getUserId() );
+        throw new FetchNotFoundException( "RSS", url );
     }
 }
