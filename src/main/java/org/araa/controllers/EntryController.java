@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/entry")
+@RequestMapping("/api/v2/entries")
 public class EntryController {
     private EntryService entryService;
 
-    @GetMapping("/entry")
+    @GetMapping()
     public Entry fetchEntry( String entryUrl) {
         return entryService.fetchEntry( entryUrl );
     }
 
-    @PostMapping("/entry")
+    @PostMapping()
     public Entry saveEntry( Entry entry ) {
         return entryService.saveEntry( entry );
     }
