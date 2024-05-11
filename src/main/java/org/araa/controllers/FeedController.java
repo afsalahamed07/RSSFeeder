@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -35,4 +36,11 @@ public class FeedController {
                     return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
                 } );
     }
+
+    @GetMapping( "/fetch_all_feeds" )
+    public ResponseEntity<List<Feed>> fetchAllFeeds() {
+        CompletableFuture<List<Feed>> feedsFuture = feedService.getAllFeedsAsync();
+        return ResponseEntity.ok( feedsFuture.join() );
+    }
+
 }

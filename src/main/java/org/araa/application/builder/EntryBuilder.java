@@ -2,6 +2,7 @@ package org.araa.application.builder;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.araa.domain.Entry;
 import org.araa.infrastructure.utility.CategoryExtractor;
 import org.araa.infrastructure.utility.DescriptionCleaner;
@@ -15,15 +16,18 @@ public class EntryBuilder {
     private final ThumbnailExtractor thumbnailExtractor;
     private final DescriptionCleaner descriptionCleaner;
 
-    public Entry buildEntry( SyndEntry syndEntry ) {
+    public Entry buildEntry( @NonNull SyndEntry syndEntry ) {
         Entry entry = new Entry();
         entry.setTitle( syndEntry.getTitle() );
         entry.setLink( syndEntry.getLink() );
         entry.setPublishedDate( syndEntry.getPublishedDate() );
         entry.setAuthor( syndEntry.getAuthor() );
-        entry.setCategories( categoryExtractor.extract( syndEntry.getCategories() ) );
+
         entry.setThumbnail( thumbnailExtractor.extractThumbnail( syndEntry ) );
         entry.setDescription( descriptionCleaner.cleanDescription( syndEntry.getDescription().getValue() ) );
+
+        categoryExtractor.extract( syndEntry.getCategories() ).forEach( entry::addCategory );
+
         return entry;
     }
 }
