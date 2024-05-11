@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping( "/api/feed" )
+@RequestMapping( "/api/v2/feeds" )
 public class FeedController {
     private final FeedService feedService;
     private static final Logger logger = LogManager.getLogger( FeedController.class );

@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping( "/api/rss" )
+@RequestMapping( "/api/v2/rss" )
 public class RSSController {
 
     private final RSSService rssService;
 
-    @PostMapping( "/register_rss" )
+    @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
         try {
             RSSDto rssDto = new RSSDto( rssService.registerRSS( url ) );
@@ -26,7 +26,7 @@ public class RSSController {
         }
     }
 
-    @GetMapping( "/fetch_rss" )
+    @GetMapping()
     public ResponseEntity<RSSDto> fetchRSS( @RequestParam String url ) {
         try {
             RSSDto rssDto = new RSSDto( rssService.getRSS( url ) );
