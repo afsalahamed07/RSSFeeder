@@ -7,12 +7,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.domain.Entry;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Feed {
+public class Feed implements Serializable {
     /**
      * This is wrapper class for SyndFeed
      * It is used to extract the required fields from SyndFeed

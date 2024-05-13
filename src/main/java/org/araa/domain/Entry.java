@@ -1,18 +1,16 @@
 package org.araa.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity
-public class Entry {
+public class Entry implements Serializable {
     /**
      * This is wrapper class for SyndEntry
      * It is used to extract the required fields from SyndEntry

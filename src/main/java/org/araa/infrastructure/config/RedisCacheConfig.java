@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
@@ -17,9 +17,9 @@ public class RedisCacheConfig {
 
     @Bean( name = "redisCacheManager" )
     public RedisCacheManager cacheManager( RedisConnectionFactory connectionFactory ) {
-        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig( Thread.currentThread().getContextClassLoader() )
+        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl( Duration.ofMinutes( 60 ) )
-                .serializeValuesWith( RedisSerializationContext.SerializationPair.fromSerializer( new GenericJackson2JsonRedisSerializer() ) );
+                .serializeValuesWith( RedisSerializationContext.SerializationPair.fromSerializer( new JdkSerializationRedisSerializer( Thread.currentThread().getContextClassLoader() ) ) );
 
         return RedisCacheManager.builder( connectionFactory )
                 .cacheDefaults( cacheConfiguration )
