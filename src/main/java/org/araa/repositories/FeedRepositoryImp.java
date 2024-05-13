@@ -29,9 +29,6 @@ public class FeedRepositoryImp implements FeedRepository {
 
     @Cacheable( value = "feed", key = "#rss", unless = "#result == null" )
     public Feed getFeed( String rss ) {
-        // this is required to set the correct class loader for the current thread
-        Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
-
         RedisCache cache = ( RedisCache ) Objects.requireNonNull( cacheManager.getCache( "feed" ) );
         logger.info( "Class loader for Feed: {}", Feed.class.getClassLoader() );
         Feed feed = cache.get( rss, Feed.class );  // This will automatically deserialize the JSON back into a Feed object

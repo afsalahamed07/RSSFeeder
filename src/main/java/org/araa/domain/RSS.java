@@ -3,12 +3,13 @@ package org.araa.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Data
 @Table( name = "rss" )
-public class RSS {
+public class RSS implements Serializable {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
