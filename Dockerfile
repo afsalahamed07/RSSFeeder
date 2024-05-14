@@ -1,11 +1,11 @@
 # Use an official OpenJDK runtime as a parent image
-FROM openjdk:11-jre-slim
+FROM openjdk:17-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy the project jar file into the container at /app
-COPY target/rss-feeder.jar /app/rss-feeder.jar
+COPY target/RSSFeeder-1.0-SNAPSHOT.jar /app/rss-feeder.jar
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
