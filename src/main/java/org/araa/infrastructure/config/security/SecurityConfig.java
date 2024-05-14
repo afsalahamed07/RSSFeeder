@@ -26,7 +26,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    // TODO : enable csrf for production
     private JwtAuthEntryPoint authEntryPoint;
 
     @Bean
@@ -56,6 +55,7 @@ public class SecurityConfig {
                                 .requestMatchers( "v3/api-docs/**" ).permitAll()
                                 .requestMatchers( "swagger-ui/**" ).permitAll()
                                 .requestMatchers( "/error" ).permitAll()
+                                .requestMatchers( "/health" ).permitAll()
                                 .anyRequest().authenticated()
                 );
 
