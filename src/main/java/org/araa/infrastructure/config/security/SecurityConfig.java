@@ -26,7 +26,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    // TODO : enable csrf for production
     private JwtAuthEntryPoint authEntryPoint;
 
     @Bean
