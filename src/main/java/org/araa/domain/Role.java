@@ -14,7 +14,7 @@ public class Role {
     @Column( name = "role_id" )
     private Long roleId;
 
-    @Column( name = "type", nullable = false )
+    @Column( name = "type", nullable = false, unique = true)
     private String type;
 
     @Column( name = "created_at" )
