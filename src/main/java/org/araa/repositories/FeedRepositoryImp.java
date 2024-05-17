@@ -1,6 +1,7 @@
 package org.araa.repositories;
 
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.builder.FeedFactory;
@@ -28,7 +29,7 @@ public class FeedRepositoryImp implements FeedRepository {
     }
 
     @Cacheable( value = "feed", key = "#rss", unless = "#result == null" )
-    public Feed getFeed( String rss ) {
+    public Feed getFeed( String rss ) throws FeedException {
         RedisCache cache = ( RedisCache ) Objects.requireNonNull( cacheManager.getCache( "feed" ) );
         logger.info( "Class loader for Feed: {}", Feed.class.getClassLoader() );
         Feed feed = cache.get( rss, Feed.class );  // This will automatically deserialize the JSON back into a Feed object
@@ -43,8 +44,8 @@ public class FeedRepositoryImp implements FeedRepository {
                 syndFeed.setUri( rss );
                 feed = feedFactory.createFeed( syndFeed );
                 return feed;
-            } catch ( Exception e ) {
-                throw new RuntimeException( "Failed to parse and create feed", e );
+            } catch ( FeedException e ) {
+                throw new FeedException( "Failed to parse and create feed", e );
             }
         }
     }

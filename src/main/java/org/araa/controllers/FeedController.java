@@ -38,9 +38,17 @@ public class FeedController {
     }
 
     @GetMapping( "/fetch_all_feeds" )
-    public ResponseEntity<List<Feed>> fetchAllFeeds() {
-        CompletableFuture<List<Feed>> feedsFuture = feedService.getAllFeedsAsync();
-        return ResponseEntity.ok( feedsFuture.join() );
+    public CompletableFuture<ResponseEntity<List<Feed>>> fetchAllFeeds() {
+        logger.info( "Received request to fetch all feeds" );
+        return feedService.getAllFeedsAsync()
+                .thenApply( feeds -> {
+                    logger.info( "Returning all feeds" );
+                    return ResponseEntity.ok( feeds );
+                } )
+                .exceptionally( e -> {
+                    logger.error( "Error fetching all feeds", e );
+                    return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
+                } );
     }
 
 }
