@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith( MockitoExtension.class )
-public class FeedControllerTest {
+class FeedControllerTest {
     @Mock
     private FeedService feedService;
 
@@ -40,7 +40,6 @@ public class FeedControllerTest {
 
         assertTrue( response.join().getStatusCode().is2xxSuccessful() );
         assertEquals( mockFeed, response.join().getBody() );
-
 
         verify( feedService ).fetchFeed( "https://www.newswire.lk/feed" );
     }
