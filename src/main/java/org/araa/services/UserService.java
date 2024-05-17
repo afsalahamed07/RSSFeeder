@@ -9,7 +9,6 @@ import org.araa.application.error.UserAlreadyExistError;
 import org.araa.domain.RSS;
 import org.araa.domain.Role;
 import org.araa.domain.User;
-import org.araa.repositories.RoleRepository;
 import org.araa.repositories.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,8 +28,8 @@ public class UserService implements UserDetailsService {
 
     private static final Logger logger = LogManager.getLogger( UserService.class );
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     public UserRegistrationResponseDTO registerUser( UserRegistrationDto userRegistrationDto ) throws UserAlreadyExistError {
         if ( Boolean.TRUE.equals( userRepository.existsByUsername( userRegistrationDto.getUsername() ) ) ) {
@@ -58,7 +57,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername( String username ) throws UsernameNotFoundException {
         User user = userRepository.findByUsername( username )
-                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+                .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
 
         return new org.springframework.security.core.userdetails.User( user.getUsername(), user.getPassword(), mapRolesToAuthorities( user.getRoles() ) );
     }
@@ -66,7 +65,7 @@ public class UserService implements UserDetailsService {
 
     public void subscribeRSS( String username, RSS rss ) {
         User user = userRepository.findByUsername( username )
-                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+                .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
         user.getSubscriptions().add( rss );
         user.setUpdatedDate( new Date() );
         userRepository.save( user );
@@ -74,15 +73,13 @@ public class UserService implements UserDetailsService {
 
     private List<SimpleGrantedAuthority> mapRolesToAuthorities( List<Role> roles ) {
         return roles.stream()
-                .map( role -> new SimpleGrantedAuthority( role.getType() ) )
+                .map( role -> new SimpleGrantedAuthority( "ROLE_" + role.getType() ) )
                 .toList();
     }
 
 
     public void setUserRole( User user ) {
-        Role roles = roleRepository.findByType( "USER" ).orElseThrow(
-                () -> new RuntimeException( "Role not found" )
-        );
+        Role roles = roleService.getRole( "USER" );
         user.setRoles( Collections.singletonList( roles ) );
     }
 

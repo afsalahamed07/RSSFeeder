@@ -42,3 +42,6 @@ feed.xml
 
 
 *.drawio
+*.drawio.bkp
+*.drawio.dtmp
+*.drawio.png
