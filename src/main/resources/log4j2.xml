@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level}{FATAL=red blink, ERROR=red,
+            WARN=yellow bold, INFO=green, DEBUG=blue, TRACE=cyan} [%thread] %logger{36} - %msg%n
+        </Property>
+        <Property name="FILE_LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %logger - %msg%n
+        </Property>
+    </Properties>
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT"/>
-        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <RollingFile name="fileLogs"
+                     fileName="logs/app.log"
+                     filePattern="logs/app-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="${FILE_LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="19500KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="1"/>
+        </RollingFile>
     </Appenders>
     <Loggers>
+        <Logger name="com.log.SpringbootLogger" additivity="false">
+            <AppenderRef ref="fileLogs"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="debug">
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="fileLogs"/>
         </Root>
     </Loggers>
 </Configuration>
