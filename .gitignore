@@ -45,3 +45,5 @@ feed.xml
 *.drawio.bkp
 *.drawio.dtmp
 *.drawio.png
+
+logs
