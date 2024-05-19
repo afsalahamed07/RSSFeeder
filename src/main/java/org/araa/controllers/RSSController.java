@@ -8,6 +8,8 @@ import org.hibernate.FetchNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping( "/api/v2/rss" )
@@ -35,5 +37,11 @@ public class RSSController {
         } catch ( FetchNotFoundException e ) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<RSSDto>> fetchAllRSS() {
+        List<RSSDto> rssDtos = rssService.getAllRSS();
+        return ResponseEntity.ok( rssDtos );
     }
 }
