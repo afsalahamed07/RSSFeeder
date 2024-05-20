@@ -12,16 +12,16 @@ public class EntryService {
 
     private EntryRepository entryRepository;
 
-    public Entry fetchEntry( String entryUrl) {
-        if ( entryRepository.existsByUrl( entryUrl ) )
-            return entryRepository.findByUrl( entryUrl );
-        throw new FetchNotFoundException( "Entry", entryUrl );
+    public Entry fetchEntry( String entryLink ) {
+        if ( entryRepository.existsByLink( entryLink ) )
+            return entryRepository.findByLink( entryLink );
+        throw new FetchNotFoundException( "Entry", entryLink );
     }
 
 
     public Entry saveEntry( Entry entry ) {
-        if ( entryRepository.existsByUrl( entry.getUrl() ) )
-            return entryRepository.findByUrl( entry.getUrl() );
+        if ( entryRepository.existsByLink( entry.getLink() ) )
+            return entryRepository.findByLink( entry.getLink() );
         return entryRepository.save( entry );
     }
 }

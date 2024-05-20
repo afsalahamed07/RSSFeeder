@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EntryRepository extends JpaRepository<Entry, Long> {
-    Entry findByUrl(String url);
+    Entry findByLink(String url);
 
-    Boolean existsByUrl(String url);
+    boolean existsByLink(String url);
 }
