@@ -69,6 +69,7 @@ public class UserService implements UserDetailsService {
         user.getSubscriptions().add( rss );
         user.setUpdatedDate( new Date() );
         userRepository.save( user );
+        logger.info( "User {} subscribed to RSS {}", username, rss.getUrl() );
     }
 
     private List<SimpleGrantedAuthority> mapRolesToAuthorities( List<Role> roles ) {
