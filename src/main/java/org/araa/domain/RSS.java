@@ -16,8 +16,8 @@ public class RSS implements Serializable {
     @Column( name = "rss_id" )
     private Long rssId;
 
-    @Column( name = "link", nullable = false, unique = true )
-    private String link;
+    @Column( name = "url", nullable = false, unique = true )
+    private String url;
 
     @Column( name = "title", nullable = false )
     private String title;
