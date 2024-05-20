@@ -25,7 +25,7 @@ public class Entry implements Serializable {
     private String title;
 
     @Column( nullable = false, unique = true )
-    private String url;
+    private String link;
 
     @Column( name = "published_date" )
     private Date publishedDate;
@@ -42,9 +42,6 @@ public class Entry implements Serializable {
             joinColumns = @JoinColumn( name = "entry_id", referencedColumnName = "entry_id" ),
             inverseJoinColumns = @JoinColumn( name = "category_id", referencedColumnName = "category_id" ) )
     private Set<Category> categories;
-
-
-    private String link;
 
 
     @Column( name = "created_at" )
