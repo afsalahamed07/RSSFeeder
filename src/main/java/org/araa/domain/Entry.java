@@ -34,7 +34,7 @@ public class Entry implements Serializable {
     private String thumbnail;
     private String description;
 
-    @ManyToOne( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
     private RSS rss;
 
     @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
