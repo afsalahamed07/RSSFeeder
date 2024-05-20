@@ -18,7 +18,7 @@ public class Entry implements Serializable {
      */
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "entry_id" )
     private Long id;
 
