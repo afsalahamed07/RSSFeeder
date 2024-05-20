@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -14,7 +15,7 @@ public class RSS implements Serializable {
     @Id
     @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "rss_id" )
-    private Long rssId;
+    private UUID rssId;
 
     @Column( name = "url", nullable = false, unique = true )
     private String url;

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -20,7 +21,7 @@ public class Entry implements Serializable {
     @Id
     @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "entry_id" )
-    private Long id;
+    private UUID id;
 
     private String title;
 
