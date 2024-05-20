@@ -62,7 +62,7 @@ public class RSSController {
 
     @GetMapping( "/all" )
     public ResponseEntity<List<RSSDto>> fetchAllRSS() {
-        List<RSSDto> rssDtos = rssService.getAllRSS();
-        return ResponseEntity.ok( rssDtos );
+        List<RSS> rss = rssService.getAllRSS();
+        return ResponseEntity.ok( RSSDto.from( rss ) );
     }
 }

@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.araa.application.dto.RSSDto;
 import org.araa.domain.RSS;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.repositories.RSSRepository;
@@ -61,8 +60,7 @@ public class RSSService {
         throw new FetchNotFoundException( "RSS", url );
     }
 
-    public List<RSSDto> getAllRSS() {
-        List<RSS> rssList = rssRepository.findAll();
-        return RSSDto.from( rssList );
+    public List<RSS> getAllRSS() {
+        return rssRepository.findAll();
     }
 }
