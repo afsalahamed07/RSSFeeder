@@ -12,7 +12,7 @@ import java.util.Date;
 public class RSS implements Serializable {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "rss_id" )
     private Long rssId;
 
