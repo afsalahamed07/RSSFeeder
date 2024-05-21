@@ -7,9 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -22,19 +26,40 @@ class RSSServiceTest {
     RSSService rssService;
 
     @Test
-    void registerRSS() {
+    void registerRSS_New_RSS_URL_Returns_New_Saved_RSS() {
         try {
-            RSS mockRSS = new RSS();
-            mockRSS.setUrl( "https://www.newswire.lk/feed" );
-            mockRSS.setTitle( "Newswire" );
+            RSS mockRSS = RSS.builder()
+                    .url( "https://www.newswire.lk/feed" )
+                    .title( "Newswire" )
+                    .build();
 
-            // Mocking the behavior of rssRepository.existsByUrl
             when( rssRepository.existsByUrl( anyString() ) ).thenReturn( false );
-            // Mocking the behavior of rssRepository.save
             when( rssRepository.save( any( RSS.class ) ) ).thenReturn( mockRSS );
 
             RSS rss = rssService.registerRSS( "https://www.newswire.lk/feed" );
 
+            assertNotNull( rss );
+            assertEquals( mockRSS.getUrl(), rss.getUrl() );
+            assertEquals( mockRSS.getTitle(), rss.getTitle() );
+        } catch ( FeedException e ) {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Test
+    void registerRSS_Existing_RSS_URL_Returns_Existing_RSS() {
+        try {
+            RSS mockRSS = RSS.builder()
+                    .url( "https://www.newswire.lk/feed" )
+                    .title( "Newswire" )
+                    .build();
+
+            when( rssRepository.existsByUrl( anyString() ) ).thenReturn( true );
+            when( rssRepository.findByUrl( anyString() ) ).thenReturn( mockRSS );
+
+            RSS rss = rssService.registerRSS( "https://www.newswire.lk/feed" );
+
+            assertNotNull( rss );
             assertEquals( mockRSS.getUrl(), rss.getUrl() );
             assertEquals( mockRSS.getTitle(), rss.getTitle() );
         } catch ( FeedException e ) {
@@ -44,10 +69,23 @@ class RSSServiceTest {
 
     @Test
     void getRSS() {
+        RSS mockRss = Mockito.mock( RSS.class );
+        when( rssRepository.existsByUrl( anyString() ) ).thenReturn( true );
+        when( rssRepository.findByUrl( anyString() ) ).thenReturn( mockRss );
+
+        RSS rss = rssService.getRSS( "https://www.newswire.lk/feed" );
+
+        assertNotNull( rss );
     }
 
     @Test
     void getAllRSS() {
-        // todo: finish this
+        RSS mockRss = Mockito.mock( RSS.class );
+        when( rssRepository.findAll() ).thenReturn( List.of( mockRss ) );
+
+        List<RSS> rssList = rssService.getAllRSS();
+
+        assertNotNull( rssList );
+        assertEquals( 1, rssList.size() );
     }
 }
