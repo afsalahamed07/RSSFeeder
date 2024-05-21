@@ -33,7 +33,7 @@ public class RSSService {
         } else {
             try {
                 SyndFeed syndFeed = XMLParser.parse( url );
-                rss = createRSSfromSyndFeed( syndFeed, url );
+                rss = buildRSS( syndFeed, url );
                 rss = rssRepository.save( rss );
                 logger.info( "RSS created for {}", url );
             } catch ( FeedException e ) {
@@ -43,14 +43,14 @@ public class RSSService {
         return rss;
     }
 
-    private RSS createRSSfromSyndFeed( @NonNull SyndFeed syndFeed, String url ) {
-        RSS rss = new RSS();
-        rss.setUrl( url );
-        rss.setFeedType( syndFeed.getFeedType() );
-        rss.setDescription( syndFeed.getDescription() );
-        rss.setTitle( syndFeed.getTitle() );
-        rss.setCreatedDate( new Date() );
-        return rss;
+    private RSS buildRSS( @NonNull SyndFeed syndFeed, String url ) {
+        return RSS.builder().
+                url( url ).
+                feedType( syndFeed.getFeedType() ).
+                description( syndFeed.getDescription() ).
+                title( syndFeed.getTitle() ).
+                createdDate( new Date() ).
+                build();
     }
 
     public RSS getRSS( String url ) throws FetchNotFoundException {
