@@ -45,8 +45,8 @@ public class RSSController {
             CompletableFuture.runAsync( () -> {
                 try {
                     syndFeed.getEntries().forEach( entry -> entryService.processEntry( entry, finalRss ) );
-
                     userService.subscribeRSS( userDetails.getUsername(), finalRss );
+                    rssService.updateRSS( finalRss );
                 } catch ( FetchNotFoundException e ) {
                     logger.info( "Failed to subscribe RSS for user {}", userDetails.getUsername() );
                 }

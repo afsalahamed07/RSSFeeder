@@ -64,4 +64,10 @@ public class RSSService {
                 createdDate( new Date() ).
                 build();
     }
+
+    public void updateRSS( RSS finalRss ) {
+        finalRss.setUpdatedDate( new Date() );
+        rssRepository.save( finalRss );
+        logger.info( "RSS updated for {}", finalRss.getUrl() );
+    }
 }
