@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EntryBuilder {
     private final CategoryExtractor categoryExtractor;
-    private final ThumbnailExtractor thumbnailExtractor;
-    private final DescriptionCleaner descriptionCleaner;
 
     public Entry buildEntry( @NonNull SyndEntry syndEntry ) {
         Entry entry = new Entry();
@@ -23,8 +21,8 @@ public class EntryBuilder {
         entry.setPublishedDate( syndEntry.getPublishedDate() );
         entry.setAuthor( syndEntry.getAuthor() );
 
-        entry.setThumbnail( thumbnailExtractor.extractThumbnail( syndEntry ) );
-        entry.setDescription( descriptionCleaner.cleanDescription( syndEntry.getDescription().getValue() ) );
+        entry.setThumbnail( ThumbnailExtractor.extractThumbnail( syndEntry ) );
+        entry.setDescription( DescriptionCleaner.cleanDescription( syndEntry.getDescription().getValue() ) );
 
         categoryExtractor.extract( syndEntry.getCategories() ).forEach( entry::addCategory );
 

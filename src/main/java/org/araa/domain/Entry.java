@@ -1,7 +1,10 @@
 package org.araa.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,6 +13,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 public class Entry implements Serializable {
     /**
@@ -33,9 +39,11 @@ public class Entry implements Serializable {
 
     private String author;
     private String thumbnail;
+
+    @Column( columnDefinition = "TEXT" )
     private String description;
 
-    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.MERGE )
     private RSS rss;
 
     @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )

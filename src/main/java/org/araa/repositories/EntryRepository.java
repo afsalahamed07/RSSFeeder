@@ -8,11 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface EntryRepository extends JpaRepository<Entry, UUID> {
-    Entry findByLink( String url );
+    Optional<Entry> findByLink( String url );
 
     boolean existsByLink( String url );
 
