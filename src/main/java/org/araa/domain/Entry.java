@@ -1,14 +1,21 @@
 package org.araa.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 public class Entry implements Serializable {
     /**
@@ -18,23 +25,25 @@ public class Entry implements Serializable {
      */
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "entry_id" )
-    private Long id;
+    private UUID id;
 
     private String title;
 
     @Column( nullable = false, unique = true )
-    private String url;
+    private String link;
 
     @Column( name = "published_date" )
     private Date publishedDate;
 
     private String author;
     private String thumbnail;
+
+    @Column( columnDefinition = "TEXT" )
     private String description;
 
-    @ManyToOne( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.MERGE )
     private RSS rss;
 
     @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
@@ -42,9 +51,6 @@ public class Entry implements Serializable {
             joinColumns = @JoinColumn( name = "entry_id", referencedColumnName = "entry_id" ),
             inverseJoinColumns = @JoinColumn( name = "category_id", referencedColumnName = "category_id" ) )
     private Set<Category> categories;
-
-
-    private String link;
 
 
     @Column( name = "created_at" )

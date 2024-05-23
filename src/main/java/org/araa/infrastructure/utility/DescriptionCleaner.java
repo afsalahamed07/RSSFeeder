@@ -1,14 +1,14 @@
 package org.araa.infrastructure.utility;
 
+import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
 
-@Component
+@UtilityClass
 public class DescriptionCleaner {
     private static final Logger logger = LogManager.getLogger( DescriptionCleaner.class );
 

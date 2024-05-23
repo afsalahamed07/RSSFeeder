@@ -1,20 +1,27 @@
 package org.araa.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table( name = "rss" )
 public class RSS implements Serializable {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "rss_id" )
-    private Long rssId;
+    private UUID rssId;
 
     @Column( name = "url", nullable = false, unique = true )
     private String url;
