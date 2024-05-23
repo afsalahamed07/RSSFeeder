@@ -1,12 +1,15 @@
 package org.araa.controllers;
 
+import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.RSSDto;
 import org.araa.domain.RSS;
+import org.araa.infrastructure.utility.XMLParser;
 import org.araa.services.AuthService;
+import org.araa.services.EntryService;
 import org.araa.services.RSSService;
 import org.araa.services.UserService;
 import org.hibernate.FetchNotFoundException;
@@ -27,17 +30,23 @@ public class RSSController {
     private final RSSService rssService;
     private final AuthService authService;
     private final UserService userService;
+    private final EntryService entryService;
 
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
         UserDetails userDetails = authService.getAuthenticatedUser();
 
         try {
-            RSS rss = rssService.registerRSS( url );
+            SyndFeed syndFeed = XMLParser.parse( url );
+            RSS rss = rssService.from( syndFeed );
+            rss = rssService.registerRSS( rss );
 
+            RSS finalRss = rss;
             CompletableFuture.runAsync( () -> {
                 try {
-                    userService.subscribeRSS( userDetails.getUsername(), rss );
+                    syndFeed.getEntries().forEach( entry -> entryService.processEntry( entry, finalRss ) );
+
+                    userService.subscribeRSS( userDetails.getUsername(), finalRss );
                 } catch ( FetchNotFoundException e ) {
                     logger.info( "Failed to subscribe RSS for user {}", userDetails.getUsername() );
                 }

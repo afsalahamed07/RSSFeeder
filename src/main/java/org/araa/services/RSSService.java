@@ -1,20 +1,18 @@
 package org.araa.services;
 
 import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.FeedException;
-import com.rometools.rome.io.ParsingFeedException;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.domain.RSS;
-import org.araa.infrastructure.utility.XMLParser;
 import org.araa.repositories.RSSRepository;
 import org.hibernate.FetchNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -25,32 +23,15 @@ public class RSSService {
     private final RSSRepository rssRepository;
 
 
-    public RSS registerRSS( String url ) throws FeedException {
-        RSS rss;
-        if ( rssRepository.existsByUrl( url ) ) {
-            logger.info( "RSS already exists for {}", url );
-            rss = rssRepository.findByUrl( url );
+    public RSS registerRSS( RSS rss ) {
+        if ( rssRepository.existsByUrl( rss.getUrl() ) ) {
+            logger.info( "RSS already exists for {}", rss.getUrl() );
+            rss = rssRepository.findByUrl( rss.getUrl() );
         } else {
-            try {
-                SyndFeed syndFeed = XMLParser.parse( url );
-                rss = buildRSS( syndFeed, url );
-                rss = rssRepository.save( rss );
-                logger.info( "RSS created for {}", url );
-            } catch ( FeedException e ) {
-                throw new ParsingFeedException( "Failed to parse and create feed", e );
-            }
+            rss = rssRepository.save( rss );
+            logger.info( "RSS created for {}", rss.getUrl() );
         }
         return rss;
-    }
-
-    private RSS buildRSS( @NonNull SyndFeed syndFeed, String url ) {
-        return RSS.builder().
-                url( url ).
-                feedType( syndFeed.getFeedType() ).
-                description( syndFeed.getDescription() ).
-                title( syndFeed.getTitle() ).
-                createdDate( new Date() ).
-                build();
     }
 
     public RSS getRSS( String url ) throws FetchNotFoundException {
@@ -60,7 +41,27 @@ public class RSSService {
         throw new FetchNotFoundException( "RSS", url );
     }
 
+    public RSS getRSS( UUID rssId ) throws FetchNotFoundException {
+        if ( rssRepository.existsById( rssId ) ) {
+            Optional<RSS> rss = rssRepository.findById( rssId );
+            if ( rss.isPresent() )
+                return rss.get();
+        }
+
+        throw new FetchNotFoundException( "RSS", rssId.toString() );
+    }
+
     public List<RSS> getAllRSS() {
         return rssRepository.findAll();
+    }
+
+    public RSS from( SyndFeed syndFeed ) {
+        return RSS.builder().
+                url( syndFeed.getLink() ).
+                feedType( syndFeed.getFeedType() ).
+                description( syndFeed.getDescription() ).
+                title( syndFeed.getTitle() ).
+                createdDate( new Date() ).
+                build();
     }
 }
