@@ -1,11 +1,15 @@
 package org.araa.controllers;
 
+import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.RSSDto;
+import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.services.AuthService;
@@ -31,6 +35,8 @@ public class RSSController {
     private final AuthService authService;
     private final UserService userService;
     private final EntryService entryService;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
@@ -38,19 +44,16 @@ public class RSSController {
 
         try {
             SyndFeed syndFeed = XMLParser.parse( url );
-            RSS rss = rssService.from( syndFeed );
+            RSS rss = rssService.from( syndFeed, url );
             rss = rssService.registerRSS( rss );
 
-            RSS finalRss = rss;
-            CompletableFuture.runAsync( () -> {
-                try {
-                    syndFeed.getEntries().forEach( entry -> entryService.processEntry( entry, finalRss ) );
-                    userService.subscribeRSS( userDetails.getUsername(), finalRss );
-                    rssService.updateRSS( finalRss );
-                } catch ( FetchNotFoundException e ) {
-                    logger.info( "Failed to subscribe RSS for user {}", userDetails.getUsername() );
-                }
-            } );
+            for ( SyndEntry syndEntry : syndFeed.getEntries() ) {
+                CompletableFuture<Entry> savedEntry = entryService.processEntry( syndEntry, rss );
+                userService.subscribeEntry( userDetails.getUsername(), savedEntry );
+            }
+
+            userService.subscribeRSS( userDetails.getUsername(), rss );
+            rssService.updateRSS( rss );
 
             return ResponseEntity.ok( new RSSDto( rss ) );
         } catch ( FeedException e ) {
