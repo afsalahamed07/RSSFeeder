@@ -1,15 +1,18 @@
 package org.araa.services;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.UserRegistrationDto;
 import org.araa.application.dto.UserRegistrationResponseDTO;
 import org.araa.application.error.UserAlreadyExistError;
+import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.domain.Role;
 import org.araa.domain.User;
 import org.araa.repositories.UserRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,10 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @Service
@@ -55,6 +56,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername( String username ) throws UsernameNotFoundException {
         User user = userRepository.findByUsername( username )
                 .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
@@ -63,6 +65,8 @@ public class UserService implements UserDetailsService {
     }
 
 
+    @Async
+    @Transactional
     public void subscribeRSS( String username, RSS rss ) {
         User user = userRepository.findByUsername( username )
                 .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
@@ -93,5 +97,26 @@ public class UserService implements UserDetailsService {
     public User getUserByUsername( String username ) {
         return userRepository.findByUsername( username )
                 .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+    }
+
+    @Async
+    @Transactional
+    public void subscribeEntry( String username, CompletableFuture<Entry> futureEntry ) {
+        User user = userRepository.findByUsername( username )
+                .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
+
+        // Initialize the entries collection if it is not already initialized
+        Set<Entry> entries = user.getEntries();
+        if ( entries == null ) {
+            entries = new HashSet<>();
+            user.setEntries( entries );
+        }
+
+        Entry entry = futureEntry.join();
+
+        user.getEntries().add( entry );
+        user.setUpdatedDate( new Date() );
+        userRepository.save( user );
+        logger.info( "User {} subscribed to Entry {}", username, entry.getTitle() );
     }
 }
