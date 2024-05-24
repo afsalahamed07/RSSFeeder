@@ -14,11 +14,13 @@ import org.hibernate.FetchNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @Service
@@ -65,7 +67,8 @@ public class EntryService {
         return entries.getContent();
     }
 
-    public void processEntry( SyndEntry syndEntry, RSS rss ) {
+    @Async
+    public CompletableFuture<Entry> processEntry( SyndEntry syndEntry, RSS rss ) {
         // todo : add categories
         Entry entry = from( syndEntry );
         entry.setRss( rss );
@@ -76,5 +79,6 @@ public class EntryService {
             logger.info( e.getMessage() );
         }
         logger.info( "Entry saved {}", entry );
+        return CompletableFuture.completedFuture( entry );
     }
 }
