@@ -21,7 +21,7 @@ public class User {
     @Column( name = "username", nullable = false )
     private String username;
 
-    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable( name = "user_subscriptions", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
             inverseJoinColumns = @JoinColumn( name = "rss_id", referencedColumnName = "rss_id" ) )
     private Set<RSS> subscriptions;
@@ -35,12 +35,12 @@ public class User {
     @Column( name = "password", nullable = false )
     private String password;
 
-    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.MERGE )
     @JoinTable( name = "user_roles", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
             inverseJoinColumns = @JoinColumn( name = "role_id", referencedColumnName = "role_id" ) )
     private List<Role> roles;
 
-    @ManyToMany( fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+    @ManyToMany( fetch = FetchType.LAZY, cascade = CascadeType.MERGE )
     @JoinTable( name = "user_entry", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
             inverseJoinColumns = @JoinColumn( name = "entry_id", referencedColumnName = "entry_id" ) )
     @OrderBy( "publishedDate DESC" )
