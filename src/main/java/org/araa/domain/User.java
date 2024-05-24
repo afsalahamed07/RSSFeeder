@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 @Data
@@ -47,7 +44,7 @@ public class User {
     @JoinTable( name = "user_entry", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
             inverseJoinColumns = @JoinColumn( name = "entry_id", referencedColumnName = "entry_id" ) )
     @OrderBy( "publishedDate DESC" )
-    private List<Entry> entries;
+    private Set<Entry> entries = new HashSet<>();
 
     @Column( name = "created_at" )
     private Date createdDate;
