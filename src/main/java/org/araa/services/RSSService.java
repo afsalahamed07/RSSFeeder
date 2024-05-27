@@ -24,7 +24,7 @@ public class RSSService {
     private final RSSRepository rssRepository;
 
 
-    public RSS registerRSS( RSS rss ) {
+    public RSS save( RSS rss ) {
         if ( rssRepository.existsByUrl( rss.getUrl() ) ) {
             logger.info( "RSS already exists for {}", rss.getUrl() );
             rss = rssRepository.findByUrl( rss.getUrl() );

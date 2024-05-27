@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.UserRegistrationDto;
 import org.araa.application.dto.UserRegistrationResponseDTO;
 import org.araa.application.error.UserAlreadyExistError;
-import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.domain.Role;
 import org.araa.domain.User;
@@ -20,8 +19,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -36,27 +37,23 @@ public class UserService implements UserDetailsService {
         if ( Boolean.TRUE.equals( userRepository.existsByUsername( userRegistrationDto.getUsername() ) ) ) {
             throw new UserAlreadyExistError( "Username already exists" );
         }
-        User user = new User();
-        user.setUsername( userRegistrationDto.getUsername() );
-        user.setName( userRegistrationDto.getName() );
-        user.setEmail( userRegistrationDto.getEmail() );
-        user.setPassword( passwordEncoder.encode( userRegistrationDto.getPassword() ) );
-        user.setCreatedDate( new Date() );
 
-        setUserRole( user );
+        User user = User.builder()
+                .username( userRegistrationDto.getUsername() )
+                .name( userRegistrationDto.getName() )
+                .email( userRegistrationDto.getEmail() )
+                .password( passwordEncoder.encode( userRegistrationDto.getPassword() ) )
+                .createdDate( new Date() )
+                .build();
+
+        setUserRole( user ); // todo: Need refactoring
 
         user = userRepository.save( user );
 
-        UserRegistrationResponseDTO userRegistrationResponseDTO = new UserRegistrationResponseDTO();
-        userRegistrationResponseDTO.setUsername( user.getUsername() );
-        userRegistrationResponseDTO.setName( user.getName() );
-        userRegistrationResponseDTO.setEmail( user.getEmail() );
-
-        return userRegistrationResponseDTO;
+        return new UserRegistrationResponseDTO( user );
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername( String username ) throws UsernameNotFoundException {
         User user = userRepository.findByUsername( username )
                 .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
@@ -99,24 +96,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
     }
 
-    @Async
-    @Transactional
-    public void subscribeEntry( String username, CompletableFuture<Entry> futureEntry ) {
-        User user = userRepository.findByUsername( username )
-                .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
-
-        // Initialize the entries collection if it is not already initialized
-        Set<Entry> entries = user.getEntries();
-        if ( entries == null ) {
-            entries = new HashSet<>();
-            user.setEntries( entries );
-        }
-
-        Entry entry = futureEntry.join();
-
-        user.getEntries().add( entry );
-        user.setUpdatedDate( new Date() );
-        userRepository.save( user );
-        logger.info( "User {} subscribed to Entry {}", username, entry.getTitle() );
+    public User save( User user ) {
+        return userRepository.save( user );
     }
 }

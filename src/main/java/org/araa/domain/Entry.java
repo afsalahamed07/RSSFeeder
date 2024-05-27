@@ -46,7 +46,7 @@ public class Entry implements Serializable {
     @ManyToOne( fetch = FetchType.LAZY )
     private RSS rss;
 
-    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable( name = "entry_category",
             joinColumns = @JoinColumn( name = "entry_id", referencedColumnName = "entry_id" ),
             inverseJoinColumns = @JoinColumn( name = "category_id", referencedColumnName = "category_id" ) )

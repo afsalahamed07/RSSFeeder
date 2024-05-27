@@ -1,15 +1,11 @@
 package org.araa.controllers;
 
-import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.RSSDto;
-import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.services.AuthService;
@@ -22,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @RestController
@@ -35,25 +30,21 @@ public class RSSController {
     private final AuthService authService;
     private final UserService userService;
     private final EntryService entryService;
-    @PersistenceContext
-    private final EntityManager entityManager;
 
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
+        logger.info( "Registering RSS from {}", url );
         UserDetails userDetails = authService.getAuthenticatedUser();
 
         try {
             SyndFeed syndFeed = XMLParser.parse( url );
             RSS rss = rssService.from( syndFeed, url );
-            rss = rssService.registerRSS( rss );
+            rss = rssService.save( rss );
 
-            for ( SyndEntry syndEntry : syndFeed.getEntries() ) {
-                CompletableFuture<Entry> savedEntry = entryService.processEntry( syndEntry, rss );
-                userService.subscribeEntry( userDetails.getUsername(), savedEntry );
-            }
-
+            // Asynchronous calls
+            entryService.processEntry( syndFeed, rss, userDetails );
             userService.subscribeRSS( userDetails.getUsername(), rss );
-            rssService.updateRSS( rss );
+            rssService.updateRSS( rss ); // flag keep track of last entries extraction
 
             return ResponseEntity.ok( new RSSDto( rss ) );
         } catch ( FeedException e ) {

@@ -17,7 +17,6 @@ import java.util.UUID;
 @Builder
 @Table( name = "rss" )
 public class RSS implements Serializable {
-
     @Id
     @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "rss_id" )
@@ -40,5 +39,4 @@ public class RSS implements Serializable {
 
     @Column( name = "updated_at" )
     private Date updatedDate;
-
 }

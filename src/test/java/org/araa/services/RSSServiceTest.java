@@ -26,9 +26,9 @@ class RSSServiceTest {
     @InjectMocks
     RSSService rssService;
 
-    @Disabled( " Will be written to adhere to the new design" )
+    @Disabled( "Will be written to adhere to the new design" )
     @Test
-    void registerRSS_New_RSS_URL_Returns_New_Saved_RSS() {
+    void save_RSS_New_RSS_URL_Returns_New_Saved_RSS() {
 //        try {
 //            RSS mockRSS = RSS.builder()
 //                    .url( "https://www.newswire.lk/feed" )
@@ -38,7 +38,7 @@ class RSSServiceTest {
 //            when( rssRepository.existsByUrl( anyString() ) ).thenReturn( false );
 //            when( rssRepository.save( any( RSS.class ) ) ).thenReturn( mockRSS );
 //
-//            RSS rss = rssService.registerRSS( "https://www.newswire.lk/feed" );
+//            RSS rss = rssService.save( "https://www.newswire.lk/feed" );
 //
 //            assertNotNull( rss );
 //            assertEquals( mockRSS.getUrl(), rss.getUrl() );
@@ -48,9 +48,9 @@ class RSSServiceTest {
 //        }
     }
 
-    @Disabled( " Will be written to adhere to the new design" )
+    @Disabled( "Will be written to adhere to the new design" )
     @Test
-    void registerRSS_Existing_RSS_URL_Returns_Existing_RSS() {
+    void save_RSS_Existing_RSS_URL_Returns_Existing_RSS() {
 //        try {
 //            RSS mockRSS = RSS.builder()
 //                    .url( "https://www.newswire.lk/feed" )
@@ -60,7 +60,7 @@ class RSSServiceTest {
 //            when( rssRepository.existsByUrl( anyString() ) ).thenReturn( true );
 //            when( rssRepository.findByUrl( anyString() ) ).thenReturn( mockRSS );
 //
-//            RSS rss = rssService.registerRSS( "https://www.newswire.lk/feed" );
+//            RSS rss = rssService.save( "https://www.newswire.lk/feed" );
 //
 //            assertNotNull( rss );
 //            assertEquals( mockRSS.getUrl(), rss.getUrl() );
