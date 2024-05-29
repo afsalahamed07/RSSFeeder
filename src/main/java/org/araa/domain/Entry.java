@@ -43,10 +43,10 @@ public class Entry implements Serializable {
     @Column( columnDefinition = "TEXT" )
     private String description;
 
-    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.MERGE )
+    @ManyToOne( fetch = FetchType.LAZY )
     private RSS rss;
 
-    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable( name = "entry_category",
             joinColumns = @JoinColumn( name = "entry_id", referencedColumnName = "entry_id" ),
             inverseJoinColumns = @JoinColumn( name = "category_id", referencedColumnName = "category_id" ) )

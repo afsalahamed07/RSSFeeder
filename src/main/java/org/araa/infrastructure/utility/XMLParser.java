@@ -10,6 +10,7 @@ import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import javax.xml.XMLConstants;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -36,10 +37,15 @@ public class XMLParser {
     public static SyndFeed parse( String feedUrl ) throws FeedException {
         try ( InputStream stream = openFeedStream( feedUrl ) ) {
             logger.info( "Parsing feed for {}", feedUrl );
-            Document document = new SAXBuilder().build( stream );
+            SAXBuilder builder = new SAXBuilder();
+            builder.setProperty( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+            builder.setProperty( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
+            Document document = builder.build( stream );
             SyndFeedInput input = new SyndFeedInput();
-            return input.build( document );
-        } catch ( IOException  | JDOMException  | FeedException e){
+            SyndFeed syndFeed = input.build( document );
+            syndFeed.setUri( feedUrl );
+            return syndFeed;
+        } catch ( IOException | JDOMException | FeedException e ) {
             throw new FeedException( "Error parsing feed", e );
         }
     }

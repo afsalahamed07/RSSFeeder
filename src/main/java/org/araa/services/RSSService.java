@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.araa.domain.RSS;
 import org.araa.repositories.RSSRepository;
 import org.hibernate.FetchNotFoundException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,7 +24,7 @@ public class RSSService {
     private final RSSRepository rssRepository;
 
 
-    public RSS registerRSS( RSS rss ) {
+    public RSS save( RSS rss ) {
         if ( rssRepository.existsByUrl( rss.getUrl() ) ) {
             logger.info( "RSS already exists for {}", rss.getUrl() );
             rss = rssRepository.findByUrl( rss.getUrl() );
@@ -57,11 +58,18 @@ public class RSSService {
 
     public RSS from( SyndFeed syndFeed ) {
         return RSS.builder().
-                url( syndFeed.getLink() ).
+                url( syndFeed.getUri() ).
                 feedType( syndFeed.getFeedType() ).
                 description( syndFeed.getDescription() ).
                 title( syndFeed.getTitle() ).
                 createdDate( new Date() ).
                 build();
+    }
+
+    @Async
+    public void updateRSS( RSS finalRss ) {
+        finalRss.setUpdatedDate( new Date() );
+        rssRepository.save( finalRss );
+        logger.info( "RSS updated for {}", finalRss.getUrl() );
     }
 }

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.RSSDto;
 import org.araa.domain.RSS;
+import org.araa.domain.User;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.services.AuthService;
 import org.araa.services.EntryService;
@@ -18,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @RestController
@@ -34,23 +34,19 @@ public class RSSController {
 
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
+        logger.info( "Registering RSS from {}", url );
         UserDetails userDetails = authService.getAuthenticatedUser();
+        User user = userService.getUserByUsername( userDetails.getUsername() );
 
         try {
             SyndFeed syndFeed = XMLParser.parse( url );
             RSS rss = rssService.from( syndFeed );
-            rss = rssService.registerRSS( rss );
+            rss = rssService.save( rss );
 
-            RSS finalRss = rss;
-            CompletableFuture.runAsync( () -> {
-                try {
-                    syndFeed.getEntries().forEach( entry -> entryService.processEntry( entry, finalRss ) );
-
-                    userService.subscribeRSS( userDetails.getUsername(), finalRss );
-                } catch ( FetchNotFoundException e ) {
-                    logger.info( "Failed to subscribe RSS for user {}", userDetails.getUsername() );
-                }
-            } );
+            // Asynchronous calls
+            entryService.processEntry( syndFeed, rss, user );
+            userService.subscribeRSS( user, rss );
+            rssService.updateRSS( rss ); // flag keep track of last entries extraction
 
             return ResponseEntity.ok( new RSSDto( rss ) );
         } catch ( FeedException e ) {

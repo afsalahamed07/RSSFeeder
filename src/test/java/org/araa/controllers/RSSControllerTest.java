@@ -29,9 +29,9 @@ class RSSControllerTest {
 
     @Test
     void registerRSS() {
-//        RSSDto rssDto = rssService.registerRSS( "https://www.newswire.lk/feed" );
+//        RSSDto rssDto = rssService.save( "https://www.newswire.lk/feed" );
 
-//        CompletableFuture<ResponseEntity<RSSDto>> response = rssController.registerRSS("https://www.newswire.lk/feed");
+//        CompletableFuture<ResponseEntity<RSSDto>> response = rssController.save("https://www.newswire.lk/feed");
 //
 //        assertNotNull( response.join().getBody() );
 //        assertEquals( rssDto, response.join().getBody() );

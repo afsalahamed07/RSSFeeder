@@ -53,7 +53,7 @@ class UserServiceTest {
         when( userRepository.save( any( User.class ) ) ).thenReturn( mockUser );
 
         // Call the method under test
-        userService.subscribeRSS( username, mockRSS );
+        userService.subscribeRSS( mockUser, mockRSS );
 
         // Capture the argument passed to save method
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass( User.class );
@@ -78,7 +78,7 @@ class UserServiceTest {
 
         // Call the method under test and expect an exception
         assertThrows( UsernameNotFoundException.class, () -> {
-            userService.subscribeRSS( username, mockRSS );
+            userService.subscribeRSS( new User(), mockRSS );
         } );
     }
 
