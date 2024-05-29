@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.RSSDto;
 import org.araa.domain.RSS;
+import org.araa.domain.User;
 import org.araa.infrastructure.utility.XMLParser;
 import org.araa.services.AuthService;
 import org.araa.services.EntryService;
@@ -35,15 +36,16 @@ public class RSSController {
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
         logger.info( "Registering RSS from {}", url );
         UserDetails userDetails = authService.getAuthenticatedUser();
+        User user = userService.getUserByUsername( userDetails.getUsername() );
 
         try {
             SyndFeed syndFeed = XMLParser.parse( url );
-            RSS rss = rssService.from( syndFeed, url );
+            RSS rss = rssService.from( syndFeed );
             rss = rssService.save( rss );
 
             // Asynchronous calls
-            entryService.processEntry( syndFeed, rss, userDetails );
-            userService.subscribeRSS( userDetails.getUsername(), rss );
+            entryService.processEntry( syndFeed, rss, user );
+            userService.subscribeRSS( user, rss );
             rssService.updateRSS( rss ); // flag keep track of last entries extraction
 
             return ResponseEntity.ok( new RSSDto( rss ) );

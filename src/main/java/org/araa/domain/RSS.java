@@ -20,7 +20,7 @@ public class RSS implements Serializable {
     @Id
     @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name = "rss_id" )
-    private UUID rssId;
+    private UUID id;
 
     @Column( name = "url", nullable = false, unique = true )
     private String url;

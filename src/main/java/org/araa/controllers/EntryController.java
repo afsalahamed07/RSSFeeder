@@ -60,7 +60,7 @@ public class EntryController {
                 if ( rss.getUpdatedDate() != null && Duration.between( ( Temporal ) rss.getUpdatedDate(), now ).toDays() > 1 ) {
                     try {
                         SyndFeed syndFeed = XMLParser.parse( rss.getUrl() );
-                        entryService.processEntry( syndFeed, rss, userDetails );
+                        entryService.processEntry( syndFeed, rss, user );
                         rssService.updateRSS( rss );
                     } catch ( Exception e ) {
                         logger.info( "Failed to update RSS {}", rss.getUrl() );

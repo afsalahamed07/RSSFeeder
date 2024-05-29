@@ -18,11 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @Service
@@ -66,15 +64,13 @@ public class EntryService {
 
     public List<Entry> fetchEntries( User user, int page, int size ) {
         Pageable pageable = PageRequest.of( page, size );
-        Page<Entry> entries = entryRepository.findEntriesByUserId( user.getUserId(), pageable );
+        Page<Entry> entries = entryRepository.findEntriesByUserId( user.getId(), pageable );
         return entries.getContent();
     }
 
     @Async
     @Transactional
-    public void processEntry( SyndFeed syndFeed, RSS rss, UserDetails userDetails ) {
-        User user = userService.getUserByUsername( userDetails.getUsername() );
-
+    public void processEntry( SyndFeed syndFeed, RSS rss, User user ) {
         for ( SyndEntry syndEntry : syndFeed.getEntries() ) {
             Entry entry = entryFrom( syndEntry );
             entry.setRss( rss );
@@ -84,13 +80,11 @@ public class EntryService {
                 entry = saveEntry( entry );
                 user.addEntry( entry );
                 logger.info( "Entry {} saved", entry.getTitle() );
+                userService.saveEntry( user, entry );
             } catch ( Exception e ) {
                 logger.error( "Failed to process entry {} : {}", entry.getLink(), e.getMessage() );
             }
         }
-
-        userService.save( user );
-        logger.info( "User {} entries updated", user.getUsername() );
     }
 
     public Set<Category> fetchCategories( SyndEntry entry ) {

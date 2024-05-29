@@ -56,9 +56,9 @@ public class RSSService {
         return rssRepository.findAll();
     }
 
-    public RSS from( SyndFeed syndFeed, String url ) {
+    public RSS from( SyndFeed syndFeed ) {
         return RSS.builder().
-                url( url ).
+                url( syndFeed.getUri() ).
                 feedType( syndFeed.getFeedType() ).
                 description( syndFeed.getDescription() ).
                 title( syndFeed.getTitle() ).
