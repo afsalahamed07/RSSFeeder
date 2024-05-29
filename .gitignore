@@ -47,3 +47,5 @@ feed.xml
 *.drawio.png
 
 logs
+
+dump.rdb
