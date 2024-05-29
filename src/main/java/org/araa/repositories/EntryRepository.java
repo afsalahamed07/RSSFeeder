@@ -17,6 +17,6 @@ public interface EntryRepository extends JpaRepository<Entry, UUID> {
 
     boolean existsByLink( String url );
 
-    @Query( "SELECT e FROM User u JOIN u.entries e WHERE u.id = :userId ORDER BY e.publishedDate ASC" )
+    @Query( "SELECT e FROM User u JOIN u.entries e WHERE u.id = :userId ORDER BY e.publishedDate DESC" )
     Page<Entry> findEntriesByUserId( @Param( "userId" ) UUID userId, Pageable pageable );
 }

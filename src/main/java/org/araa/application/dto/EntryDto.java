@@ -1,9 +1,9 @@
 package org.araa.application.dto;
 
 import lombok.Data;
-import org.araa.domain.Category;
 import org.araa.domain.Entry;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -14,6 +14,7 @@ public class EntryDto {
     private String author;
     private String thumbnail;
     private List<CategoryDto> category;
+    private Date publishedDate;
 
     public EntryDto( Entry entry ) {
         this.title = entry.getTitle();
@@ -22,6 +23,7 @@ public class EntryDto {
         this.author = entry.getAuthor();
         this.thumbnail = entry.getThumbnail();
         this.category = entry.getCategories().stream().map( CategoryDto::new ).toList();
+        this.publishedDate = entry.getPublishedDate();
     }
 
 }

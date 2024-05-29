@@ -78,7 +78,6 @@ public class EntryService {
                 Set<Category> categories = fetchCategories( syndEntry );
                 entry.setCategories( categories );
                 entry = saveEntry( entry );
-                user.addEntry( entry );
                 logger.info( "Entry {} saved", entry.getTitle() );
                 userService.saveEntry( user, entry );
             } catch ( Exception e ) {
