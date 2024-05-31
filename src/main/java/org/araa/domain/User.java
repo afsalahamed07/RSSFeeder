@@ -55,9 +55,11 @@ public class User {
     @Column( name = "updated_at" )
     private Date updatedDate;
 
-    public void addEntry( Entry entry ) {
-        if ( entries == null )
-            entries = new HashSet<>();
-        entries.add( entry );
+    public User setRole( Role role ) {
+        if ( roles == null ) {
+            roles = new ArrayList<>();
+        }
+        roles.add( role );
+        return this;
     }
 }
