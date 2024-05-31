@@ -36,7 +36,7 @@ public class EntryController {
     private static final Logger logger = LogManager.getLogger( EntryController.class );
 
     @GetMapping()
-    public Entry fetchEntry( String entryUrl ) {
+    public Entry fetchEntry( @RequestParam String entryUrl ) {
         return entryService.fetchEntry( entryUrl );
     }
 
@@ -46,12 +46,12 @@ public class EntryController {
     }
 
 
-    @GetMapping( "all_entries" )
+    @GetMapping( "all" )
     public ResponseEntity<List<EntryDto>> fetchEntries( @RequestParam int page, @RequestParam int size ) {
         UserDetails userDetails = authService.getAuthenticatedUser();
         User user = userService.getUserByUsername( userDetails.getUsername() );
         List<Entry> entries = entryService.fetchEntries( user, page, size );
-        List<EntryDto> entryDtos = entries.stream().map( EntryDto::new ).toList();
+        List<EntryDto> entryDTOs = entries.stream().map( EntryDto::new ).toList();
 
         CompletableFuture.runAsync( () -> {
             Set<RSS> subscriptions = user.getSubscriptions();
@@ -69,6 +69,6 @@ public class EntryController {
             }
         } );
 
-        return ResponseEntity.ok( entryDtos );
+        return ResponseEntity.ok( entryDTOs );
     }
 }
