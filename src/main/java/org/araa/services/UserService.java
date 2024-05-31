@@ -1,6 +1,5 @@
 package org.araa.services;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +19,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -35,10 +33,6 @@ public class UserService implements UserDetailsService {
     private final RoleService roleService;
 
     public UserRegistrationResponseDTO registerUser( UserRegistrationDto userRegistrationDto ) throws UserAlreadyExistError {
-        if ( Boolean.TRUE.equals( userRepository.existsByUsername( userRegistrationDto.getUsername() ) ) ) {
-            throw new UserAlreadyExistError( "Username already exists" );
-        }
-
         User user = User.builder()
                 .username( userRegistrationDto.getUsername() )
                 .name( userRegistrationDto.getName() )
@@ -47,9 +41,10 @@ public class UserService implements UserDetailsService {
                 .createdDate( new Date() )
                 .build();
 
-        setUserRole( user ); // todo: Need refactoring
+        Role role = roleService.setUserRole( "USER" );
+        user.setRole( role );
 
-        user = userRepository.save( user );
+        user = save( user ); // throws UserAlreadyExistError
 
         return new UserRegistrationResponseDTO( user );
     }
@@ -59,14 +54,13 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername( username )
                 .orElseThrow( () -> new UsernameNotFoundException( username + " not found" ) );
 
-        return new org.springframework.security.core.userdetails.User( user.getUsername(), user.getPassword(), mapRolesToAuthorities( user.getRoles() ) );
+        return new org.springframework.security.core.userdetails.
+                User( user.getUsername(), user.getPassword(), mapRolesToAuthorities( user.getRoles() ) );
     }
 
 
     @Async
-    @Transactional
     public void subscribeRSS( User user, RSS rss ) {
-        user.getSubscriptions().add( rss );
         userRepository.subscribeToRss( user.getId(), rss.getId() );
         logger.info( "User {} subscribed to RSS {}", user.getUsername(), rss.getUrl() );
     }
@@ -77,11 +71,6 @@ public class UserService implements UserDetailsService {
                 .toList();
     }
 
-
-    public void setUserRole( User user ) {
-        Role roles = roleService.getRole( "USER" );
-        user.setRoles( Collections.singletonList( roles ) );
-    }
 
     public Set<RSS> getUserSubscriptions( String username ) {
         User user = userRepository.findByUsername( username )
@@ -94,7 +83,10 @@ public class UserService implements UserDetailsService {
                 .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
     }
 
-    public User save( User user ) {
+    private User save( User user ) {
+        if ( Boolean.TRUE.equals( userRepository.existsByUsername( user.getUsername() ) ) ) {
+            throw new UserAlreadyExistError( "Username already exists" );
+        }
         return userRepository.save( user );
     }
 
