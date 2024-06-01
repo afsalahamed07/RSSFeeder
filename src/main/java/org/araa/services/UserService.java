@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @Service
@@ -72,9 +73,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public Set<RSS> getUserSubscriptions( String username ) {
-        User user = userRepository.findByUsername( username )
-                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+    public Set<RSS> getUserSubscriptions( User user ) {
         return user.getSubscriptions();
     }
 
@@ -101,5 +100,11 @@ public class UserService implements UserDetailsService {
         } catch ( Exception e ) {
             logger.error( "Error saving entry to user", e );
         }
+    }
+
+    @Async
+    public void updateEntries( User user, CompletableFuture<List<Entry>> entries ) {
+        entries.thenAccept( entryList -> entryList.
+                forEach( entry -> saveEntry( user, entry ) ) );
     }
 }
