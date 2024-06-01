@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.Temporal;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -57,7 +57,10 @@ public class EntryController {
             Set<RSS> subscriptions = user.getSubscriptions();
             LocalDateTime now = LocalDateTime.now();
             for ( RSS rss : subscriptions ) {
-                if ( rss.getUpdatedDate() != null && Duration.between( ( Temporal ) rss.getUpdatedDate(), now ).toDays() > 1 ) {
+                LocalDateTime updatedDate = rss.getUpdatedDate().toInstant()
+                        .atZone( ZoneId.systemDefault() )
+                        .toLocalDateTime();
+                if ( Duration.between( updatedDate, now ).toHours() > 10 ) {
                     try {
                         SyndFeed syndFeed = XMLParser.parse( rss.getUrl() );
                         entryService.processEntry( syndFeed, rss, user );
