@@ -1,6 +1,7 @@
 package org.araa.repositories;
 
 import org.araa.domain.Entry;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,7 @@ public interface EntryRepository extends JpaRepository<Entry, UUID> {
 
     boolean existsByLink( String url );
 
+    @Cacheable( value = "entries", key = "#userId + '#' + #pageable.pageNumber", unless = "#result == null" )
     @Query( "SELECT e FROM User u JOIN u.entries e WHERE u.id = :userId ORDER BY e.publishedDate DESC" )
     Page<Entry> findEntriesByUserId( @Param( "userId" ) UUID userId, Pageable pageable );
 }
