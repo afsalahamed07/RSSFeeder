@@ -4,7 +4,7 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.araa.application.dto.EntryDto;
+import org.araa.application.dto.EntriesDTO;
 import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.domain.User;
@@ -28,12 +28,11 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping( "/api/v2/entries" )
 public class EntryController {
+    private static final Logger logger = LogManager.getLogger( EntryController.class );
     private EntryService entryService;
     private final AuthService authService;
     private final UserService userService;
-    private final RSSService rssService;
-
-    private static final Logger logger = LogManager.getLogger( EntryController.class );
+    private RSSService rssService;
 
     @GetMapping()
     public Entry fetchEntry( @RequestParam String entryUrl ) {
@@ -47,23 +46,25 @@ public class EntryController {
 
 
     @GetMapping( "all" )
-    public ResponseEntity<List<EntryDto>> fetchEntries( @RequestParam int page, @RequestParam int size ) {
+    public ResponseEntity<EntriesDTO> fetchEntries( @RequestParam int page, @RequestParam int size ) {
+        if ( page < 0 || size < 0 ) {
+            return ResponseEntity.badRequest().build();
+        }
+
         UserDetails userDetails = authService.getAuthenticatedUser();
         User user = userService.getUserByUsername( userDetails.getUsername() );
-        List<Entry> entries = entryService.fetchEntries( user, page, size );
-        List<EntryDto> entryDTOs = entries.stream().map( EntryDto::new ).toList();
+        EntriesDTO entriesDTO = entryService.entriesDTO( page, size, user );
 
         CompletableFuture.runAsync( () -> {
-            Set<RSS> subscriptions = user.getSubscriptions();
             LocalDateTime now = LocalDateTime.now();
+            Set<RSS> subscriptions = userService.getUserSubscriptions( user );
             for ( RSS rss : subscriptions ) {
-                LocalDateTime updatedDate = rss.getUpdatedDate().toInstant()
-                        .atZone( ZoneId.systemDefault() )
-                        .toLocalDateTime();
-                if ( Duration.between( updatedDate, now ).toHours() > 10 ) {
+                LocalDateTime updatedDate = rss.getUpdatedDate().toInstant().atZone( ZoneId.systemDefault() ).toLocalDateTime();
+                if ( Duration.between( updatedDate, now ).toHours() > 1 ) {
                     try {
                         SyndFeed syndFeed = XMLParser.parse( rss.getUrl() );
-                        entryService.processEntry( syndFeed, rss, user );
+                        CompletableFuture<List<Entry>> entries = entryService.processEntry( syndFeed, rss );
+                        userService.updateEntries( user, entries );
                         rssService.updateRSS( rss );
                     } catch ( Exception e ) {
                         logger.info( "Failed to update RSS {}", rss.getUrl() );
@@ -72,6 +73,6 @@ public class EntryController {
             }
         } );
 
-        return ResponseEntity.ok( entryDTOs );
+        return ResponseEntity.ok( entriesDTO );
     }
 }

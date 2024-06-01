@@ -2,10 +2,11 @@ package org.araa.services;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.araa.application.dto.EntriesDTO;
+import org.araa.application.dto.EntryDto;
 import org.araa.domain.Category;
 import org.araa.domain.Entry;
 import org.araa.domain.RSS;
@@ -21,12 +22,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @Service
 public class EntryService {
 
-    private final UserService userService;
     private EntryRepository entryRepository;
     private CategoryService categoryService;
     private static final Logger logger = LogManager.getLogger( EntryService.class );
@@ -46,8 +47,7 @@ public class EntryService {
 
     public Entry fetchEntry( String entryLink ) {
         Optional<Entry> optionalEntry = entryRepository.findByLink( entryLink );
-        if ( optionalEntry.isPresent() )
-            return optionalEntry.get();
+        if ( optionalEntry.isPresent() ) return optionalEntry.get();
 
         throw new FetchNotFoundException( "Entry", entryLink );
     }
@@ -69,8 +69,8 @@ public class EntryService {
     }
 
     @Async
-    @Transactional
-    public void processEntry( SyndFeed syndFeed, RSS rss, User user ) {
+    public CompletableFuture<List<Entry>> processEntry( SyndFeed syndFeed, RSS rss ) {
+        List<Entry> entries = new ArrayList<>();
         for ( SyndEntry syndEntry : syndFeed.getEntries() ) {
             Entry entry = entryFrom( syndEntry );
             entry.setRss( rss );
@@ -78,12 +78,13 @@ public class EntryService {
                 Set<Category> categories = fetchCategories( syndEntry );
                 entry.setCategories( categories );
                 entry = saveEntry( entry );
+                entries.add( entry );
                 logger.info( "Entry {} saved", entry.getTitle() );
-                userService.saveEntry( user, entry );
             } catch ( Exception e ) {
                 logger.error( "Failed to process entry {} : {}", entry.getLink(), e.getMessage() );
             }
         }
+        return CompletableFuture.completedFuture( entries );
     }
 
     public Set<Category> fetchCategories( SyndEntry entry ) {
@@ -97,5 +98,28 @@ public class EntryService {
             categories.add( category );
         }
         return categories;
+    }
+
+    public int entries( UUID userId ) {
+        return entryRepository.countByUserId( userId );
+    }
+
+    public int totalPages( int size, long totalElements ) {
+        return ( int ) Math.ceil( ( double ) totalElements / size );
+    }
+
+    public EntriesDTO entriesDTO( int page, int size, User user ) {
+        List<Entry> entries = fetchEntries( user, page, size );
+        List<EntryDto> entryDTOs = entries.stream().map( EntryDto::new ).toList();
+
+        return EntriesDTO.builder()
+                .entries( entryDTOs )
+                .page( page )
+                .size( size )
+                .totalPages( totalPages( size, entries( user.getId() ) ) )
+                .totalElements( entries( user.getId() ) )
+                .nextPage( page + 1 )
+                .previousPage( page - 1 )
+                .build();
     }
 }

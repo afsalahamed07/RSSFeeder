@@ -21,4 +21,7 @@ public interface EntryRepository extends JpaRepository<Entry, UUID> {
     @Cacheable( value = "entries", key = "#userId + '#' + #pageable.pageNumber", unless = "#result == null" )
     @Query( "SELECT e FROM User u JOIN u.entries e WHERE u.id = :userId ORDER BY e.publishedDate DESC" )
     Page<Entry> findEntriesByUserId( @Param( "userId" ) UUID userId, Pageable pageable );
+
+    @Query( value = "SELECT COUNT(*) FROM user_entry WHERE user_id = :userId", nativeQuery = true )
+    int countByUserId( UUID userId );
 }
