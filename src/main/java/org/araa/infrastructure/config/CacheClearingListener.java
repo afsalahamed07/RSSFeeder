@@ -21,6 +21,6 @@ public class CacheClearingListener implements ApplicationListener<ContextRefresh
     @Override
     public void onApplicationEvent( @NonNull ContextRefreshedEvent event ) {
         // Assuming the name of your cache is "feed"
-        Objects.requireNonNull( cacheManager.getCache( "feed" ) ).clear();
+        Objects.requireNonNull( cacheManager.getCache( "entries" ) ).clear();
     }
 }
