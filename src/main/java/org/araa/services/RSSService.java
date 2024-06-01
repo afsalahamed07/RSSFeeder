@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -23,6 +21,10 @@ public class RSSService {
 
     private final RSSRepository rssRepository;
 
+    public RSS registerRSS( SyndFeed syndFeed ) {
+        RSS rss = from( syndFeed );
+        return save( rss );
+    }
 
     public RSS save( RSS rss ) {
         if ( rssRepository.existsByUrl( rss.getUrl() ) ) {
@@ -42,15 +44,6 @@ public class RSSService {
         throw new FetchNotFoundException( "RSS", url );
     }
 
-    public RSS getRSS( UUID rssId ) throws FetchNotFoundException {
-        if ( rssRepository.existsById( rssId ) ) {
-            Optional<RSS> rss = rssRepository.findById( rssId );
-            if ( rss.isPresent() )
-                return rss.get();
-        }
-
-        throw new FetchNotFoundException( "RSS", rssId.toString() );
-    }
 
     public List<RSS> getAllRSS() {
         return rssRepository.findAll();
@@ -63,13 +56,14 @@ public class RSSService {
                 description( syndFeed.getDescription() ).
                 title( syndFeed.getTitle() ).
                 createdDate( new Date() ).
+                updatedDate( new Date() ).
                 build();
     }
 
     @Async
-    public void updateRSS( RSS finalRss ) {
-        finalRss.setUpdatedDate( new Date() );
-        rssRepository.save( finalRss );
-        logger.info( "RSS updated for {}", finalRss.getUrl() );
+    public void updateRSS( RSS rss ) {
+        rss.setUpdatedDate( new Date() );
+        rssRepository.save( rss );
+        logger.info( "RSS updated for {}", rss.getUrl() );
     }
 }

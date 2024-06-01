@@ -3,9 +3,8 @@ package org.araa.controllers;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import lombok.AllArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.araa.application.dto.RSSDto;
+import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.domain.User;
 import org.araa.infrastructure.utility.XMLParser;
@@ -14,39 +13,39 @@ import org.araa.services.EntryService;
 import org.araa.services.RSSService;
 import org.araa.services.UserService;
 import org.hibernate.FetchNotFoundException;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping( "/api/v2/rss" )
 public class RSSController {
-
-    private static final Logger logger = LogManager.getLogger( RSSController.class );
-
     private final RSSService rssService;
-    private final AuthService authService;
     private final UserService userService;
     private final EntryService entryService;
+    private final AuthService authService;
+    private final RedisCacheManager cacheManager;
 
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
-        logger.info( "Registering RSS from {}", url );
-        UserDetails userDetails = authService.getAuthenticatedUser();
-        User user = userService.getUserByUsername( userDetails.getUsername() );
-
         try {
+            UserDetails userDetails = authService.getAuthenticatedUser();
+            User user = userService.getUserByUsername( userDetails.getUsername() );
+
             SyndFeed syndFeed = XMLParser.parse( url );
-            RSS rss = rssService.from( syndFeed );
-            rss = rssService.save( rss );
+            RSS rss = rssService.registerRSS( syndFeed );
+
+            Objects.requireNonNull( cacheManager.getCache( "entries" ) ).clear();
 
             // Asynchronous calls
-            entryService.processEntry( syndFeed, rss, user );
-            userService.subscribeRSS( user, rss );
-            rssService.updateRSS( rss ); // flag keep track of last entries extraction
+            CompletableFuture<List<Entry>> entries = entryService.processEntry( syndFeed, rss );
+            userService.updateEntries( user, entries );
 
             return ResponseEntity.ok( new RSSDto( rss ) );
         } catch ( FeedException e ) {
