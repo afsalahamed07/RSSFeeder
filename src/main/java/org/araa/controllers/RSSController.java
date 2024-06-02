@@ -32,6 +32,7 @@ public class RSSController {
     private final AuthService authService;
     private final RedisCacheManager cacheManager;
 
+
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
         try {
@@ -46,6 +47,7 @@ public class RSSController {
             // Asynchronous calls
             CompletableFuture<List<Entry>> entries = entryService.processEntry( syndFeed, rss );
             userService.updateEntries( user, entries );
+            userService.subscribeRSS( user, rss );
 
             return ResponseEntity.ok( new RSSDto( rss ) );
         } catch ( FeedException e ) {
