@@ -39,12 +39,6 @@ public class EntryController {
         return entryService.fetchEntry( entryUrl );
     }
 
-    @PostMapping()
-    public Entry saveEntry( Entry entry ) {
-        return entryService.saveEntry( entry );
-    }
-
-
     @GetMapping( "all" )
     public ResponseEntity<EntriesDTO> fetchEntries( @RequestParam int page, @RequestParam int size ) {
         if ( page < 0 || size < 0 ) {

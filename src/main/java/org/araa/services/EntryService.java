@@ -55,17 +55,6 @@ public class EntryService {
         throw new FetchNotFoundException( "Entry", entryLink );
     }
 
-
-    // todo: delete and related
-    public Entry saveEntry( Entry entry ) {
-        if ( entryRepository.existsByLink( entry.getLink() ) ) {
-            logger.info( "Entry already exists for {}", entry.getLink() );
-            return fetchEntry( entry.getLink() );
-        }
-        logger.info( "Saving entry {}", entry );
-        return entryRepository.save( entry );
-    }
-
     public List<Entry> fetchEntries( User user, int page, int size ) {
         Pageable pageable = PageRequest.of( page, size );
         Page<Entry> entries = entryRepository.findEntriesByUserId( user.getId(), pageable );
