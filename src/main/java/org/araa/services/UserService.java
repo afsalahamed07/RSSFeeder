@@ -1,5 +1,7 @@
 package org.araa.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,8 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
+    private EntityManagerFactory entityManagerFactory; // this is sued to create transaction for async calls
+
     public UserRegistrationResponseDTO registerUser( UserRegistrationDto userRegistrationDto ) throws UserAlreadyExistError {
         User user = User.builder()
                 .username( userRegistrationDto.getUsername() )
@@ -62,8 +66,17 @@ public class UserService implements UserDetailsService {
 
     @Async
     public void subscribeRSS( User user, RSS rss ) {
-        userRepository.subscribeToRss( user.getId(), rss.getId() );
-        logger.info( "User {} subscribed to RSS {}", user.getUsername(), rss.getUrl() );
+        try ( EntityManager entityManager = entityManagerFactory.createEntityManager() ) {
+            entityManager.getTransaction().begin();
+            entityManager.createNativeQuery( "INSERT INTO user_subscriptions (user_id, rss_id) VALUES (:userId, :rssId)" )
+                    .setParameter( "userId", user.getId() )
+                    .setParameter( "rssId", rss.getId() )
+                    .executeUpdate();
+            entityManager.getTransaction().commit();
+            logger.info( "User {} subscribed to RSS {}", user.getUsername(), rss.getUrl() );
+        } catch ( Exception e ) {
+            logger.error( "Failed to subscribe user to RSS", e );
+        }
     }
 
     private List<SimpleGrantedAuthority> mapRolesToAuthorities( List<Role> roles ) {
@@ -89,22 +102,27 @@ public class UserService implements UserDetailsService {
         return userRepository.save( user );
     }
 
-    public void saveEntry( User user, Entry entry ) {
-        if ( userRepository.existsByEntry( user.getId(), entry.getId() ) ) {
-            logger.info( "Entry {} already saved to user {}", entry.getId(), user.getId() );
-            return;
-        }
-        try {
-            userRepository.addEntryToUser( user.getId(), entry.getId() );
-            logger.info( "Entry {} saved to user {}", entry.getId(), user.getId() );
-        } catch ( Exception e ) {
-            logger.error( "Error saving entry to user", e );
-        }
-    }
-
     @Async
     public void updateEntries( User user, CompletableFuture<List<Entry>> entries ) {
-        entries.thenAccept( entryList -> entryList.
-                forEach( entry -> saveEntry( user, entry ) ) );
+        entries.thenAccept( entriesList -> {
+            try ( EntityManager em = entityManagerFactory.createEntityManager() ) {
+                em.getTransaction().begin();
+                for ( Entry entry : entriesList ) {
+                    if ( userRepository.existsByEntry( user.getId(), entry.getId() ) ) {
+                        logger.info( "Entry {} already saved to user {}", entry.getId(), user.getId() );
+                        continue;
+                    }
+                    em.createNativeQuery( "INSERT INTO user_entry (user_id, entry_id) VALUES (:userId, :entryId)" )
+                            .setParameter( "userId", user.getId() )
+                            .setParameter( "entryId", entry.getId() )
+                            .executeUpdate();
+
+                    logger.info( "Entry {} saved to user {}", entry.getId(), user.getId() );
+                }
+                em.getTransaction().commit();
+            } catch ( Exception e ) {
+                logger.error( "Failed to save entries to user", e );
+            }
+        } );
     }
 }
