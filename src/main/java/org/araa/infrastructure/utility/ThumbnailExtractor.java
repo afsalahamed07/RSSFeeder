@@ -23,7 +23,7 @@ public class ThumbnailExtractor {
             return descriptionDocument.getRootElement().getChild( "p" ).getChild( "img" ).getAttributeValue( "src" );
         } catch ( Exception e ) {
             logger.error( "Error extracting thumbnail", e );
-            return null;
+            return "default-thumbnail.jpg";
         }
     }
 }

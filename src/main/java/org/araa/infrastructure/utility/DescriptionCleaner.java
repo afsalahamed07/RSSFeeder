@@ -1,5 +1,6 @@
 package org.araa.infrastructure.utility;
 
+import com.rometools.rome.feed.synd.SyndContent;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,10 +35,11 @@ public class DescriptionCleaner {
         }
     }
 
-    public String cleanDescription( String htmlContent ) {
+    public String cleanDescription( SyndContent htmlContent ) {
         try {
+            if ( htmlContent == null ) return "No Description Available"; // Return null if the input is null
             // Parse the HTML content
-            Document doc = Jsoup.parse( htmlContent );
+            Document doc = Jsoup.parse( htmlContent.getValue() );
 
             // Remove all <img> elements from the document
             Elements images = doc.select( "img" );
