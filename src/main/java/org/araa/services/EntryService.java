@@ -2,6 +2,8 @@ package org.araa.services;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,17 +32,18 @@ public class EntryService {
 
     private EntryRepository entryRepository;
     private CategoryService categoryService;
+    private EntityManagerFactory entityManagerFactory;
+
     private static final Logger logger = LogManager.getLogger( EntryService.class );
 
     public Entry entryFrom( SyndEntry syndEntry ) {
-
         return Entry.builder().
                 title( syndEntry.getTitle() ).
                 link( syndEntry.getLink().strip() ).
                 publishedDate( syndEntry.getPublishedDate() ).
                 author( syndEntry.getAuthor() ).
                 thumbnail( ThumbnailExtractor.extractThumbnail( syndEntry ) ).
-                description( DescriptionCleaner.cleanDescription( syndEntry.getDescription().getValue() ) ).
+                description( DescriptionCleaner.cleanDescription( syndEntry.getDescription() ) ).
                 createdDate( new Date() ).
                 build();
     }
@@ -53,6 +56,7 @@ public class EntryService {
     }
 
 
+    // todo: delete and related
     public Entry saveEntry( Entry entry ) {
         if ( entryRepository.existsByLink( entry.getLink() ) ) {
             logger.info( "Entry already exists for {}", entry.getLink() );
@@ -71,18 +75,31 @@ public class EntryService {
     @Async
     public CompletableFuture<List<Entry>> processEntry( SyndFeed syndFeed, RSS rss ) {
         List<Entry> entries = new ArrayList<>();
-        for ( SyndEntry syndEntry : syndFeed.getEntries() ) {
-            Entry entry = entryFrom( syndEntry );
-            entry.setRss( rss );
-            try {
+        try ( EntityManager entityManager = entityManagerFactory.createEntityManager() ) {
+            entityManager.getTransaction().begin();
+
+            for ( SyndEntry syndEntry : syndFeed.getEntries() ) {
+                if ( entryRepository.existsByLink( syndEntry.getLink() ) ) {
+                    logger.info( "Entry already exists for {}", syndEntry.getLink() );
+                    continue;
+                }
+
+                Entry entry = entryFrom( syndEntry );
+                entry.setRss( rss );
+
+                // todo: transfer to category service
                 Set<Category> categories = fetchCategories( syndEntry );
                 entry.setCategories( categories );
-                entry = saveEntry( entry );
+
+                entityManager.persist( entry );
+
                 entries.add( entry );
                 logger.info( "Entry {} saved", entry.getTitle() );
-            } catch ( Exception e ) {
-                logger.error( "Failed to process entry {} : {}", entry.getLink(), e.getMessage() );
             }
+
+            entityManager.getTransaction().commit();
+        } catch ( Exception e ) {
+            logger.error( "Error processing entries", e );
         }
         return CompletableFuture.completedFuture( entries );
     }
