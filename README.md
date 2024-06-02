@@ -43,3 +43,23 @@ To get the application up and running on your local machine for development and 
 
 4. **Access the application:**
    Open your browser and navigate to `http://localhost:8080` to view and manage the RSS feeds.
+
+## Docker Setup
+To run the application using Docker, follow these steps:
+
+### Build and run the Docker containers:
+Make sure you have Docker installed and running on your machine. Then execute the following commands:
+
+1. **Build the Docker image:**
+    ```sh
+    docker-compose build
+    ```
+
+2. **Start the containers:**
+    ```sh
+    docker-compose up
+    ```
+
+### Docker Compose Configuration:
+The `docker-compose.yml` file is configured to set up the RSS Feeder Application along with PostgreSQL and Redis services.
+
