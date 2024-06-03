@@ -13,6 +13,7 @@ import org.araa.domain.RSS;
 import org.araa.domain.Role;
 import org.araa.domain.User;
 import org.araa.repositories.UserRepository;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,6 +36,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private final RedisCacheManager redisCacheManager;
 
     private EntityManagerFactory entityManagerFactory; // this is sued to create transaction for async calls
 
@@ -66,6 +69,10 @@ public class UserService implements UserDetailsService {
 
     @Async
     public void subscribeRSS( User user, RSS rss ) {
+        if ( user.getSubscriptions().contains( rss ) ) {
+            logger.info( "User {} already subscribed to RSS {}", user.getUsername(), rss.getUrl() );
+            return;
+        }
         try ( EntityManager entityManager = entityManagerFactory.createEntityManager() ) {
             entityManager.getTransaction().begin();
             entityManager.createNativeQuery( "INSERT INTO user_subscriptions (user_id, rss_id) VALUES (:userId, :rssId)" )
@@ -77,6 +84,8 @@ public class UserService implements UserDetailsService {
         } catch ( Exception e ) {
             logger.error( "Failed to subscribe user to RSS", e );
         }
+
+        Objects.requireNonNull( redisCacheManager.getCache( "entries" ) ).clear();
     }
 
     private List<SimpleGrantedAuthority> mapRolesToAuthorities( List<Role> roles ) {
