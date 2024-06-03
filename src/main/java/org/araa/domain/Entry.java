@@ -31,7 +31,7 @@ public class Entry implements Serializable {
 
     private String title;
 
-    @Column( nullable = false, unique = true )
+    @Column( nullable = false )
     private String link;
 
     @Column( name = "published_date" )
