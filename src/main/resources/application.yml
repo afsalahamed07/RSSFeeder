@@ -8,7 +8,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-#    show-sql: true
+
   data:
     redis:
       host: localhost
@@ -17,6 +17,12 @@ spring:
 logging:
   level:
     org:
+#      hibernate:
+#        SQL: DEBUG
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
       springframework:
         security: DEBUG
     root: info
