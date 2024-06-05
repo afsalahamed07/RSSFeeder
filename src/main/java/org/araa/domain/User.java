@@ -1,6 +1,8 @@
 package org.araa.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +24,12 @@ public class User {
     @Column( name = "user_id" )
     private UUID id;
 
+    @NotNull
+    @Size(
+            min = 2,
+            max = 255,
+            message = "Name is required, maximum 255 characters."
+    )
     @Column( name = "username", nullable = false )
     private String username;
 
