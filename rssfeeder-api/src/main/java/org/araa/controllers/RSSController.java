@@ -3,15 +3,15 @@ package org.araa.controllers;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import lombok.AllArgsConstructor;
-import org.araa.application.dto.RSSDto;
 import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.domain.User;
-import org.araa.infrastructure.utility.XMLParser;
+import org.araa.dto.RSSDto;
 import org.araa.services.AuthService;
 import org.araa.services.EntryService;
 import org.araa.services.RSSService;
 import org.araa.services.UserService;
+import org.araa.utility.XMLParser;
 import org.hibernate.FetchNotFoundException;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +36,8 @@ public class RSSController {
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
         try {
-            UserDetails userDetails = authService.getAuthenticatedUser();
-            User user = userService.getUserByUsername( userDetails.getUsername() );
+            String username = authService.getUsername();
+            User user = userService.getUserByUsername( username );
 
             SyndFeed syndFeed = XMLParser.parse( url );
             RSS rss = rssService.registerRSS( syndFeed );

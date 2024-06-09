@@ -38,6 +38,11 @@
             <artifactId>rssfeeder-persistance</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.araa</groupId>
+            <artifactId>rssfeeder-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

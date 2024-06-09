@@ -1,4 +1,4 @@
-package org.araa.error;
+package errors;
 
 public class UserAlreadyExistError extends RuntimeException {
     public UserAlreadyExistError( String message ) {

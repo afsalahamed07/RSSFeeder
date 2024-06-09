@@ -23,9 +23,9 @@ public class RoleService {
         return roleRepository.findByType( type ).orElseThrow( () -> new FetchNotFoundException( "Role", type ) );
     }
 
-    public Role saveRole( RoleSaveDto roleSaveDto ) {
+    public Role saveRole( String type ) {
         Role role = Role.builder()
-                .type( roleSaveDto.getType() )
+                .type( type )
                 .createdDate( new Date() )
                 .build();
         return roleRepository.save( role );

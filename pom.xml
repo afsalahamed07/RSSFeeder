@@ -56,12 +56,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.rometools/rome -->
         <dependency>
             <groupId>com.rometools</groupId>

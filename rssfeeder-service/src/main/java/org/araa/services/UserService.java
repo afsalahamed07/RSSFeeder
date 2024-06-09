@@ -1,13 +1,11 @@
 package org.araa.services;
 
+import errors.UserAlreadyExistError;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.araa.application.dto.UserRegistrationDto;
-import org.araa.application.dto.UserRegistrationResponseDTO;
-import org.araa.application.error.UserAlreadyExistError;
 import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.domain.Role;
@@ -40,12 +38,12 @@ public class UserService implements UserDetailsService {
 
     private EntityManagerFactory entityManagerFactory; // this is sued to create transaction for async calls
 
-    public UserRegistrationResponseDTO registerUser( UserRegistrationDto userRegistrationDto ) throws UserAlreadyExistError {
+    public User registerUser( String userName, String name, String email, String password ) throws UserAlreadyExistError {
         User user = User.builder()
-                .username( userRegistrationDto.getUsername() )
-                .name( userRegistrationDto.getName() )
-                .email( userRegistrationDto.getEmail() )
-                .password( passwordEncoder.encode( userRegistrationDto.getPassword() ) )
+                .username( userName )
+                .name( name )
+                .email( email )
+                .password( passwordEncoder.encode( password ) )
                 .createdDate( new Date() )
                 .build();
 
@@ -54,7 +52,7 @@ public class UserService implements UserDetailsService {
 
         user = save( user ); // throws UserAlreadyExistError
 
-        return new UserRegistrationResponseDTO( user );
+        return user;
     }
 
     @Override

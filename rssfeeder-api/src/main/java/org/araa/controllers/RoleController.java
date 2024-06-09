@@ -1,8 +1,8 @@
 package org.araa.controllers;
 
 import lombok.AllArgsConstructor;
-import org.araa.application.dto.RoleSaveDto;
 import org.araa.domain.Role;
+import org.araa.dto.RoleSaveDto;
 import org.araa.services.RoleService;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class RoleController {
 
     @PostMapping
     public Role saveRole( @RequestBody RoleSaveDto roleSaveDto ) {
-        return roleService.saveRole( roleSaveDto );
+        return roleService.saveRole( roleSaveDto.getType() );
     }
 
 }

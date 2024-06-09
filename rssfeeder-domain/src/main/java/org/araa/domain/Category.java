@@ -29,9 +29,4 @@ public class Category implements Serializable {
 
     @Column( name = "updated_at" )
     private Date updatedDate;
-
-    public Category( String name ) {
-        this.name = name;
-    }
-
 }

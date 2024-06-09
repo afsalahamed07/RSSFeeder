@@ -112,16 +112,7 @@ public class EntryService {
         return ( int ) Math.ceil( ( double ) totalElements / size );
     }
 
-    public EntriesDTO entriesDTO( int page, int size, User user ) {
-        List<Entry> entries = fetchEntries( user, page, size );
-
-        return EntriesDTO.builder() .entries( entryDTOs )
-                .page( page )
-                .size( size )
-                .totalPages( totalPages( size, entries( user.getId() ) ) )
-                .totalElements( entries( user.getId() ) )
-                .nextPage( page + 1 )
-                .previousPage( page - 1 )
-                .build();
+    public List<Entry> pagedEntries( int page, int size, User user ) {
+        return fetchEntries( user, page, size );
     }
 }

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class EntryDto {
+public class EntryDTO {
     private String title;
     private String description;
     private String link;
@@ -16,7 +16,7 @@ public class EntryDto {
     private List<CategoryDto> category;
     private Date publishedDate;
 
-    public EntryDto( Entry entry ) {
+    public EntryDTO( Entry entry ) {
         this.title = entry.getTitle();
         this.description = entry.getDescription();
         this.link = entry.getLink();
