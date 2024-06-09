@@ -1,6 +1,7 @@
 package org.araa.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -34,13 +35,27 @@ public class User {
     private String username;
 
     @ManyToMany( fetch = FetchType.LAZY )
-    @JoinTable( name = "user_subscriptions", joinColumns = @JoinColumn( name = "user_id", referencedColumnName = "user_id" ),
+    @JoinTable( name = "user_subscriptions", joinColumns = @JoinColumn( name = "user_id", referencedColumnName =
+            "user_id" ),
             inverseJoinColumns = @JoinColumn( name = "rss_id", referencedColumnName = "rss_id" ) )
     private Set<RSS> subscriptions;
 
+    @NotNull
+    @Size(
+            min = 2,
+            max = 255,
+            message = "Name is required, maximum 255 characters."
+    )
     @Column( name = "name", nullable = false )
     private String name;
 
+    @NotNull
+    @Email( message = "Email should be valid." )
+    @Size(
+            min = 2,
+            max = 255,
+            message = "Email is required, maximum 255 characters."
+    )
     @Column( name = "email", nullable = false )
     private String email;
 
