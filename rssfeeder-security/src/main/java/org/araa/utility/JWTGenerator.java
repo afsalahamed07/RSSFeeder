@@ -1,9 +1,9 @@
-package utility;
+package org.araa.utility;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.araa.infrastructure.config.security.SecurityConstants;
+import org.araa.config.SecurityConstants;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import static org.araa.infrastructure.config.security.SecurityConstants.JWT_SECRET;
+import static org.araa.config.SecurityConstants.JWT_SECRET;
+
 
 @Component
 public class JWTGenerator {

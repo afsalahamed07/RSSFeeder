@@ -1,7 +1,6 @@
 package org.araa.services;
 
 import lombok.AllArgsConstructor;
-import org.araa.application.dto.RoleSaveDto;
 import org.araa.domain.Role;
 import org.araa.repositories.RoleRepository;
 import org.hibernate.FetchNotFoundException;
@@ -15,8 +14,7 @@ import java.util.Objects;
 public class RoleService {
     private RoleRepository roleRepository;
 
-    public Role getRole( Long roleId ) {
-        return roleRepository.findById( roleId ).orElseThrow( () -> new FetchNotFoundException( "Role", roleId ) );
+    public Role getRole( Long roleId ) { return roleRepository.findById( roleId ).orElseThrow( () -> new FetchNotFoundException( "Role", roleId ) );
     }
 
     public Role getRole( String type ) {

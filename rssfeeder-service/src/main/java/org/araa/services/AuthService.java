@@ -10,7 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import utility.JWTGenerator;
+import org.araa.utility.JWTGenerator;
 
 @AllArgsConstructor
 @Service
