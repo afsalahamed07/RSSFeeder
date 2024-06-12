@@ -6,7 +6,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication
+@SpringBootApplication ( scanBasePackages = "org.araa" )
 @EnableCaching
 @EnableAsync( proxyTargetClass = true )
 @EnableTransactionManagement

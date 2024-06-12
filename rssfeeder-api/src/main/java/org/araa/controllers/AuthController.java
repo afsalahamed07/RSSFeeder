@@ -8,6 +8,7 @@ import org.araa.dto.UserRegistrationDto;
 import org.araa.dto.UserRegistrationResponseDTO;
 import errors.UserAlreadyExistError;
 import org.araa.services.AuthService;
+import org.araa.services.CustomUserDetailsService;
 import org.araa.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping( "/api/v2/auth" )
 public class AuthController {
-    private final UserService userService;
     private final AuthService authService;
+    private final CustomUserDetailsService customUserDetailsService;
 
 
     @PostMapping( "/register" )
     public ResponseEntity<UserRegistrationResponseDTO> register( @RequestBody UserRegistrationDto request ) {
         try {
-            User user = userService.registerUser(
+            User user = customUserDetailsService.registerUser(
                     request.getUsername(),
                     request.getName(),
                     request.getEmail(),

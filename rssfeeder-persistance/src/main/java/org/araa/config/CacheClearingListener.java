@@ -1,4 +1,4 @@
-package config;
+package org.araa.config;
 
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;

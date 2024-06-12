@@ -1,4 +1,4 @@
-package config;
+package org.araa.config;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +19,10 @@ public class RedisCacheConfig {
     public RedisCacheManager cacheManager( RedisConnectionFactory connectionFactory ) {
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl( Duration.ofMinutes( 60 ) )
-                .serializeValuesWith( RedisSerializationContext.SerializationPair.fromSerializer( new JdkSerializationRedisSerializer( Thread.currentThread().getContextClassLoader() ) ) );
+                .serializeValuesWith( RedisSerializationContext.SerializationPair.
+                        fromSerializer( new JdkSerializationRedisSerializer(
+                                Thread.currentThread().getContextClassLoader()
+                        ) ) );
 
         return RedisCacheManager.builder( connectionFactory )
                 .cacheDefaults( cacheConfiguration )

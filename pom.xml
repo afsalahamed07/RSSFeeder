@@ -141,6 +141,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.araa</groupId>
+                <artifactId>rssfeeder-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>5.10.2</version>
