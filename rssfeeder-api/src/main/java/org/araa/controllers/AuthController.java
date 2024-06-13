@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping( "/api/v2/auth" )
 public class AuthController {
     private final AuthService authService;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserService userService;
 
 
     @PostMapping( "/register" )
     public ResponseEntity<UserRegistrationResponseDTO> register( @RequestBody UserRegistrationDto request ) {
         try {
-            User user = customUserDetailsService.registerUser(
+            User user = userService.registerUser(
                     request.getUsername(),
                     request.getName(),
                     request.getEmail(),

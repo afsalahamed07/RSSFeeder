@@ -1,5 +1,6 @@
 package org.araa.services;
 
+import errors.UserAlreadyExistError;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.AllArgsConstructor;
@@ -7,13 +8,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.araa.domain.Entry;
 import org.araa.domain.RSS;
+import org.araa.domain.Role;
 import org.araa.domain.User;
 import org.araa.repositories.UserRepository;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -26,8 +29,38 @@ public class UserService {
     private static final Logger logger = LogManager.getLogger( UserService.class );
     private final UserRepository userRepository;
     private final RedisCacheManager redisCacheManager;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     private EntityManagerFactory entityManagerFactory; // this is sued to create transaction for async calls
+
+    public User registerUser( String userName, String name, String email, String password ) throws UserAlreadyExistError {
+        User user = User.builder()
+                .username( userName )
+                .name( name )
+                .email( email )
+                .password( passwordEncoder.encode( password ) )
+                .createdDate( new Date() )
+                .build();
+
+
+        setUseRole( user );
+        user = save( user ); // throws UserAlreadyExistError
+
+        return user;
+    }
+
+    private void setUseRole( User user ) {
+        Role role = roleService.getRole( "USER" );
+        user.setRole( role );
+    }
+
+    private User save( User user ) {
+        if ( Boolean.TRUE.equals( userRepository.existsByUsername( user.getUsername() ) ) ) {
+            throw new UserAlreadyExistError( "Username already exists" );
+        }
+        return userRepository.save( user );
+    }
 
     @Async
     public void subscribeRSS( User user, RSS rss ) {
@@ -38,7 +71,8 @@ public class UserService {
 
         try ( EntityManager entityManager = entityManagerFactory.createEntityManager() ) {
             entityManager.getTransaction().begin();
-            entityManager.createNativeQuery( "INSERT INTO user_subscriptions (user_id, rss_id) VALUES (:userId, :rssId)" )
+            entityManager.createNativeQuery( "INSERT INTO user_subscriptions (user_id, rss_id) VALUES (:userId, " +
+                            ":rssId)" )
                     .setParameter( "userId", user.getId() )
                     .setParameter( "rssId", rss.getId() )
                     .executeUpdate();
@@ -57,7 +91,8 @@ public class UserService {
 
     public User getUserByUsername( String username ) {
         return userRepository.findByUsername( username )
-                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
+                .orElseThrow( () -> new RuntimeException( "User not found" ) ); // todo: This should throw user not
+        // found exception
     }
 
     @Async
