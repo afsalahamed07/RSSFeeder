@@ -1,17 +1,20 @@
 package org.araa.services;
 
+import org.araa.domain.Role;
 import org.araa.domain.User;
-import org.araa.error.UserAlreadyExistError;
 import org.araa.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith( MockitoExtension.class )
@@ -19,46 +22,39 @@ class CustomUserDetailsServiceTest {
     @Mock
     UserRepository userRepository;
 
-    @Mock
-    PasswordEncoder passwordEncoder;
-
     @InjectMocks
     CustomUserDetailsService customUserDetailsService;
 
     @Test
-    void save_new_user() {
+    void loadUserByUsername_for_existing_user() {
         User user = new User();
-        user.setUsername( "testuser" );
-        user.setEmail( "test@email.com" );
-        user.setName( "Test User" );
-        user.setPassword( "password" );
+        user.setUsername( "test" );
+        user.setPassword( "test" );
+        user.setEmail( "test@emila.com" );
 
-        when( passwordEncoder.encode( user.getPassword() ) ).thenReturn( user.getPassword() );
-        when( userRepository.save( any( User.class ) ) ).thenReturn( user );
+        Role role = new Role();
+        role.setType( "USER" );
 
-        User savedUser = customUserDetailsService.registerUser( user.getUsername(), user.getName(), user.getEmail(),
-                user.getPassword() );
+        user.setRoles( List.of( role ) );
 
-        assertNotNull( savedUser );
-        assertEquals( user.getUsername(), savedUser.getUsername() );
-        assertEquals( user.getEmail(), savedUser.getEmail() );
-        assertEquals( user.getName(), savedUser.getName() );
-        assertEquals( user.getPassword(), savedUser.getPassword() );
+        when( userRepository.findByUsername( "test" ) ).thenReturn( Optional.of( user ) );
+
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername( "test" );
+
+        assertEquals( "test", userDetails.getUsername() );
+        assertEquals( "test", userDetails
+                .getPassword() );
+        assertEquals( 1, userDetails.getAuthorities().size() );
+        assertEquals( "ROLE_USER", userDetails.getAuthorities().stream().findFirst().get().getAuthority() );
     }
 
     @Test
-    void save_existing_user() {
-        User user = new User();
-        user.setUsername( "testuser" );
-        user.setEmail( "test@email.com" );
-        user.setName( "Test User" );
-        user.setPassword( "password" );
+    void loadUserByUsername_for_non_existing_user() {
+        when( userRepository.findByUsername( "test" ) ).thenReturn( Optional.empty() );
 
-        when( passwordEncoder.encode( user.getPassword() ) ).thenReturn( user.getPassword() );
-        when( userRepository.existsByUsername( user.getUsername() ) ).thenReturn( Boolean.TRUE );
+        assertThrows( org.springframework.security.core.userdetails.UsernameNotFoundException.class,
+                () -> customUserDetailsService.loadUserByUsername( "test" ) );
 
-        assertThrowsExactly( UserAlreadyExistError.class, () ->
-                customUserDetailsService.registerUser( user.getUsername(), user.getName(), user.getEmail(), user.getPassword() )
-        );
     }
+
 }
