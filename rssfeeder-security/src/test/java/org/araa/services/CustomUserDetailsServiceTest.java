@@ -52,8 +52,10 @@ class CustomUserDetailsServiceTest {
     void loadUserByUsername_for_non_existing_user() {
         when( userRepository.findByUsername( "test" ) ).thenReturn( Optional.empty() );
 
-        assertThrows( org.springframework.security.core.userdetails.UsernameNotFoundException.class,
-                () -> customUserDetailsService.loadUserByUsername( "test" ) );
+
+        assertThrows( org.springframework.security.core.userdetails.UsernameNotFoundException.class, () -> {
+            customUserDetailsService.loadUserByUsername( "test" );
+        } );
 
     }
 

@@ -53,7 +53,7 @@ public class RSSService {
         return RSS.builder().
                 url( syndFeed.getUri() ).
                 feedType( syndFeed.getFeedType() ).
-                description( syndFeed.getDescription() ).
+                description( syndFeed.getDescription() != null ? syndFeed.getDescription() : "No Description Available" ).
                 title( syndFeed.getTitle() ).
                 createdDate( new Date() ).
                 updatedDate( new Date() ).
