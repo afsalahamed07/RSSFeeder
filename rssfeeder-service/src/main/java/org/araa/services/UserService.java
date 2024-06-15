@@ -1,6 +1,5 @@
 package org.araa.services;
 
-import errors.UserAlreadyExistError;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.AllArgsConstructor;
@@ -10,6 +9,7 @@ import org.araa.domain.Entry;
 import org.araa.domain.RSS;
 import org.araa.domain.Role;
 import org.araa.domain.User;
+import org.araa.error.UserAlreadyExistError;
 import org.araa.repositories.UserRepository;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.scheduling.annotation.Async;
