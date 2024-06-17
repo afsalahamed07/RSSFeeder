@@ -13,6 +13,7 @@ import org.araa.error.UserAlreadyExistError;
 import org.araa.repositories.UserRepository;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -91,8 +92,7 @@ public class UserService {
 
     public User getUserByUsername( String username ) {
         return userRepository.findByUsername( username )
-                .orElseThrow( () -> new RuntimeException( "User not found" ) ); // todo: This should throw user not
-        // found exception
+                .orElseThrow( () -> new UsernameNotFoundException( "User not found" ) );
     }
 
     @Async
