@@ -10,12 +10,11 @@ import org.araa.domain.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Repository
-public class UserRepositoryCustom {
-    private static final Logger logger = LogManager.getLogger( UserRepositoryCustom.class );
+public class UserSubscriptionRepository {
+    private static final Logger logger = LogManager.getLogger( UserSubscriptionRepository.class );
 
     private final EntityManagerFactory entityManagerFactory;
 

@@ -11,16 +11,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
-import java.util.List;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @SpringBootTest
 @TestInstance( TestInstance.Lifecycle.PER_CLASS )
 @AutoConfigureTestDatabase( connection = EmbeddedDatabaseConnection.H2 )
-class UserRepositoryCustomTest {
+class UserSubscriptionRepositoryTest {
     @Autowired
-    UserRepositoryCustom userRepositoryCustom;
+    UserSubscriptionRepository userSubscriptionRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -57,9 +56,21 @@ class UserRepositoryCustomTest {
         User user = userRepository.findByUsername( "admin" ).get();
         RSS rss = rssRepository.findByUrl( "testurl.com" );
 
-        userRepositoryCustom.subscribe( user, rss );
+        userSubscriptionRepository.subscribe( user, rss );
 
-        assertTrue( "User should be subscribed to RSS", userRepositoryCustom.isSubscribed( user, rss ) );
+        assertTrue( "User should be subscribed to RSS", userSubscriptionRepository.isSubscribed( user, rss ) );
 
     }
+
+    @Test
+    void unsubscribe() {
+        User user = userRepository.findByUsername( "admin" ).get();
+        RSS rss = rssRepository.findByUrl( "testurl.com" );
+
+        userSubscriptionRepository.subscribe( user, rss );
+        userSubscriptionRepository.unsubscribe( user, rss );
+
+        assertTrue( "User should not be subscribed to RSS", !userSubscriptionRepository.isSubscribed( user, rss ) );
+    }
+
 }

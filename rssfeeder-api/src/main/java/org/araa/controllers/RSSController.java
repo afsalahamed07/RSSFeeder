@@ -32,7 +32,6 @@ public class RSSController {
     private final AuthService authService;
     private final RedisCacheManager cacheManager;
 
-
     @PostMapping()
     public ResponseEntity<RSSDto> registerRSS( @RequestParam String url ) {
         try {
